@@ -19,7 +19,7 @@ Di folder ini jalankan `python -m http.server 8765`, lalu buka `http://localhost
 
 ## Deploy Render
 
-Unggah folder ini ke GitHub. Di Render buat **Static Site**, pilih repo tersebut, set **Publish Directory** ke `qna-offline` (jika repo mencakup folder induk) atau `.` (jika folder ini menjadi root repo). Build command kosong. Tidak ada backend dan tidak ada API key.
+Untuk repo `Arkbil/QNA-Naura`, pilihan utama di Render adalah **New → Static Site**: branch `main`, Root Directory kosong, Build Command `echo ready`, dan Publish Directory `.`. Jika sudah terlanjur membuat **Web Service**, repo ini juga memiliki `package.json` dan server Node kecil: gunakan Build Command `echo ready` dan Start Command `yarn start`. Server tersebut hanya mengirim berkas statis; pemrosesan suara dan pencocokan tetap berjalan di browser tanpa API key.
 
 ## Bank jawaban
 
