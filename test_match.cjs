@@ -23,8 +23,7 @@ for (const asset of ['index.html', 'styles.css', 'extras.css', 'vendor/vosk.js',
   assert.ok(worker.includes(`'./${asset}'`), `Asset absent from offline cache: ${asset}`);
 }
 assert.ok(fs.existsSync('model-en.tar.gz'), 'Missing offline speech model');
-assert.ok(app.includes("cache.add('./model-en.tar.gz')"), 'Speech model is not cached during preparation');
-assert.ok(worker.includes("key !== MODEL_CACHE"), 'Speech model cache must survive page updates');
+assert.ok(app.includes("loadBundledVoskModel('./model-en.tar.gz')"), 'Speech model is not loaded locally');
 
 assert.equal(bank.length, 201);
 assert.equal(new Set(bank.map(entry => entry.id)).size, bank.length, 'Duplicate entry ID');

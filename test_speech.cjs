@@ -16,7 +16,6 @@ let modelLoads = 0;
 let micOpens = 0;
 let tracksStopped = 0;
 let recognizerRemoved = 0;
-let modelCacheAdds = 0;
 let recognizer;
 const audioNode = () => ({ connect() {}, disconnect() {}, gain: { value: 1 } });
 class AudioContext {
@@ -37,10 +36,6 @@ const context = vm.createContext({
   document: { getElementById: get, createElement: element },
   window: {
     addEventListener() {}, scrollTo() {}, AudioContext, SpeechRecognition,
-    caches: { async open(name) {
-      assert.equal(name, 'naura-qna-model-v1');
-      return { async match() { return modelCacheAdds ? {} : undefined; }, async add(path) { assert.equal(path, './model-en.tar.gz'); modelCacheAdds++; } };
-    } },
     Vosk: {
       async createModel() { throw new Error('Direct model load should be used'); },
       Model: class {
@@ -78,7 +73,6 @@ const context = vm.createContext({
   assert.equal(get('mic-button').disabled, false);
   await get('mic-button').onclick();
   assert.equal(modelLoads, 1);
-  assert.equal(modelCacheAdds, 1);
   assert.equal(micOpens, 1);
   assert.match(get('mic-pill').textContent, /Question mode/);
   recognizer.handlers.partialresult({ result: { partial: 'why use lime' } });
@@ -95,5 +89,10 @@ const context = vm.createContext({
   assert.equal(modelLoads, 1, 'Prepared model should be reused');
   assert.equal(micOpens, 2);
   await get('mic-button').onclick();
+  context.window.Vosk.Model = class {
+    worker = { addEventListener() {} };
+    on(event, callback) { if (event === 'error') setTimeout(() => callback({ error: 'Quota exceeded' }), 0); }
+  };
+  await assert.rejects(vm.runInContext("loadBundledVoskModel('./model-en.tar.gz')", context), /Quota exceeded/);
   console.log('Speech: native unavailable -> bundled Vosk -> question/idle/restart passed.');
 })().catch(error => { console.error(error); process.exitCode = 1; });

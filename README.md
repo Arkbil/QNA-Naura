@@ -5,18 +5,20 @@ Website statis untuk sesi Q&A paper *LIME-Guided Refinement for One-Day-Ahead Ra
 ## Jalankan sebelum acara
 
 1. Buka website lewat HTTPS (misalnya Render) di browser desktop yang mendukung mikrofon dan WebAssembly.
-2. Tekan **Prepare offline speech** saat internet masih tersedia. Bila speech lokal browser tidak tersedia, aplikasi memuat model Vosk Inggris yang sudah dibundel (~41 MB). Pemrosesan pertama dapat memakan beberapa menit; status menampilkan waktu yang telah berlalu. Tunggu status **Offline Vosk speech is ready and cached**. Jika lebih dari tiga menit, aplikasi menampilkan galat dan pencarian ketik tetap tersedia.
+2. Tekan **Prepare offline speech** saat internet masih tersedia. Bila speech lokal browser tidak tersedia, aplikasi memuat model Vosk Inggris yang sudah dibundel (~41 MB) dan mengekstraknya ke penyimpanan browser (~71 MB). Pemrosesan pertama dapat memakan beberapa menit; status menampilkan waktu yang telah berlalu. Tunggu status **Offline Vosk speech is ready**. Jika lebih dari tiga menit, aplikasi menampilkan galat dan pencarian ketik tetap tersedia.
 3. Izinkan mikrofon, lalu uji satu pertanyaan. **Enter question mode** mulai mendengarkan. **Return to idle** mematikan mikrofon.
 4. Setelah satu jawaban muncul, tekan **Follow-up mode** untuk pertanyaan lanjutan. **New question** memulai ucapan baru dan mempertahankan konteks jawaban terakhir. **Reset context** memulai dari nol.
    Saat mengetik atau berbicara, panel kanan menampilkan sampai lima kandidat berurutan dengan persentase skor kecocokan. Klik kandidat untuk memeriksa jawabannya secara manual. Pertanyaan pendek atau ambigu tidak membuka jawaban otomatis.
 5. Setelah halaman dan model siap, matikan Wi-Fi dan coba lagi. Jangan menghapus data situs atau cache browser sebelum acara. Tunggu instalasi cache situs selesai sebelum mematikan Wi-Fi.
 6. Jika suara lokal tidak tersedia, ketik pertanyaan di kotak teks. Aplikasi tidak akan beralih diam-diam ke layanan suara cloud.
 
-Audio diproses oleh `SpeechRecognition.processLocally` bila tersedia, atau oleh Vosk WebAssembly di browser. Kedua jalur memproses suara di perangkat. Pencocokan berjalan dengan JavaScript lokal terhadap bank Q&A. Service worker menyimpan halaman, bank, dan kode Vosk; tombol persiapan menyimpan model suara di cache terpisah agar pembaruan halaman tidak menghapusnya. Pembukaan pertama situs di Render tetap membutuhkan internet. Berkas model adalah `model-en.tar.gz` (41,166,150 byte).
+Audio diproses oleh `SpeechRecognition.processLocally` bila tersedia, atau oleh Vosk WebAssembly di browser. Kedua jalur memproses suara di perangkat. Pencocokan berjalan dengan JavaScript lokal terhadap bank Q&A. Service worker menyimpan halaman, bank, dan kode Vosk. Vosk sendiri menyimpan model yang sudah diekstrak di penyimpanan browser setelah berhasil memuatnya; aplikasi tidak lagi menyimpan salinan arsip 41 MB. Pembukaan pertama situs di Render tetap membutuhkan internet. Berkas model adalah `model-en.tar.gz` (41,166,150 byte).
 
 ## Menjalankan lokal
 
 Di folder ini jalankan `python -m http.server 8765`, lalu buka `http://localhost:8765`. Mikrofon tidak bekerja dari berkas `file://`; gunakan localhost atau HTTPS.
+
+Jika drive C: hampir penuh, jalankan `powershell -ExecutionPolicy Bypass -File .\open-qna-browser.ps1 -Url "https://alamat-situs.onrender.com"`. Skrip membuka Chrome (atau Edge) dengan profil dan folder sementara di drive D:, sehingga model Vosk punya ruang untuk diekstrak. Izinkan mikrofon lagi pada profil baru. Ganti URL dengan alamat Render yang sebenarnya; tanpa `-Url`, skrip membuka localhost.
 
 ## Deploy Render
 

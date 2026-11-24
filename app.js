@@ -21,7 +21,6 @@ let readyLanguage = '';
 let speechEngine = null;
 let voskModel = null;
 let pendingVoskModel = null;
-let modelCached = false;
 let voskRecognizer = null;
 let mediaStream = null;
 let audioContext = null;
@@ -228,6 +227,7 @@ function loadBundledVoskModel(path) {
   pendingVoskModel = model;
   return new Promise((resolve, reject) => {
     model.on('load', message => message.result ? resolve(model) : reject(new Error('The local speech model was rejected by the Vosk worker.')));
+    model.on('error', message => reject(new Error(message.error || 'Local speech setup failed. Check browser storage; the unpacked model needs about 71 MB.')));
     model.worker.addEventListener('error', event => reject(new Error(event.message || 'The local speech worker failed.')), { once: true });
     model.worker.addEventListener('messageerror', () => reject(new Error('The local speech worker could not transfer model data.')), { once: true });
   });
@@ -252,15 +252,7 @@ async function prepareSpeech() {
       } catch { /* Chrome local speech failed; use the bundled model below. */ }
     }
     if (!voskSupported) throw new Error('Local microphone processing is unavailable. Typed search still works.');
-    ui.status.textContent = 'Caching the bundled English model for offline use (about 41 MB)…';
-    if (window.caches) {
-      try {
-        const cache = await window.caches.open('naura-qna-model-v1');
-        if (!await cache.match('./model-en.tar.gz')) await cache.add('./model-en.tar.gz');
-        modelCached = true;
-      } catch { modelCached = false; }
-    }
-    ui.status.textContent = 'Loading local speech model. First use can take a few minutes; typed search works meanwhile.';
+    ui.status.textContent = 'Preparing local speech model (41 MB download, about 71 MB browser storage). Typed search works meanwhile.';
     if (!voskModel) {
       let timeout;
       const started = Date.now();
@@ -270,7 +262,7 @@ async function prepareSpeech() {
       try {
         voskModel = await Promise.race([
           loadBundledVoskModel('./model-en.tar.gz'),
-          new Promise((_, reject) => { timeout = setTimeout(() => reject(new Error('Speech model did not finish loading within 3 minutes. Reload this page and try again; typed search still works.')), 180000); })
+          new Promise((_, reject) => { timeout = setTimeout(() => reject(new Error('Speech model did not finish within 3 minutes. Check free browser storage or use a profile on drive D:. Typed search still works.')), 180000); })
         ]);
       } finally {
         clearTimeout(timeout); clearInterval(progress);
@@ -279,7 +271,7 @@ async function prepareSpeech() {
       }
     }
     speechEngine = 'vosk'; readyLanguage = lang;
-    ui.status.textContent = modelCached ? 'Offline Vosk speech is ready and cached. Question mode can listen now.' : 'Vosk speech is ready in this tab. Offline reload is not verified; keep this tab open.';
+    ui.status.textContent = 'Offline Vosk speech is ready. Question mode can listen now.';
     return true;
   } catch (error) {
     speechEngine = null; readyLanguage = ''; ui.status.textContent = error?.message || 'Local speech model failed to load. Typed search still works.';
