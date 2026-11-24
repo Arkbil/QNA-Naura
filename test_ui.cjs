@@ -29,7 +29,7 @@ const context = vm.createContext({
   get('question').value = 'Why use LIME if it did not significantly improve accuracy?';
   get('question').oninput();
   assert.equal(get('answer-content').hidden, false);
-  assert.match(get('matched-answer').textContent, /22 to 13/);
+  assert.match(get('matched-answer').textContent, /13 features instead of the baseline's 22/);
   assert.equal(get('candidate-panel').hidden, false);
   assert.match(get('candidate-list').children[0].textContent, /^1\. 100%/);
   assert.equal(get('followup-button').disabled, false);

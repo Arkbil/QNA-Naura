@@ -80,7 +80,7 @@ const context = vm.createContext({
   assert.equal(get('candidate-panel').hidden, false);
   recognizer.handlers.result({ result: { text: 'why use lime if accuracy did not significantly improve' } });
   assert.match(get('candidate-list').children[0].textContent, /\d+%/);
-  assert.match(get('matched-answer').textContent, /22 to 13/);
+  assert.match(get('matched-answer').textContent, /13 features instead of the baseline's 22/);
   await get('mic-button').onclick();
   assert.equal(tracksStopped, 1);
   assert.equal(recognizerRemoved, 1);
