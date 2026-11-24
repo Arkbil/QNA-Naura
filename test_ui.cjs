@@ -30,6 +30,8 @@ const context = vm.createContext({
   get('question').oninput();
   assert.equal(get('answer-content').hidden, false);
   assert.match(get('matched-answer').textContent, /22 to 13/);
+  assert.equal(get('candidate-panel').hidden, false);
+  assert.match(get('candidate-list').children[0].textContent, /^1\. 100%/);
   assert.equal(get('followup-button').disabled, false);
 
   get('followup-button').onclick();
@@ -48,5 +50,17 @@ const context = vm.createContext({
   get('question').oninput();
   assert.equal(get('no-match').hidden, false);
   assert.equal(get('match-pill').textContent, 'No reliable match');
-  console.log('UI: category order, match, follow-up, reset, and abstention passed.');
+  get('question').value = 'lime feature';
+  get('question').oninput();
+  assert.equal(get('no-match').hidden, false, 'Ambiguous short query must not auto-answer');
+  const candidates = get('candidate-list').children;
+  assert.equal(candidates.length, 5);
+  const scores = candidates.map(button => Number(button.textContent.match(/^\d+\. (\d+)%/)[1]));
+  assert.deepEqual(scores, [...scores].sort((a, b) => b - a));
+  candidates[1].onclick();
+  assert.equal(get('answer-content').hidden, false);
+  assert.match(get('match-pill').textContent, /Selected candidate/);
+  get('clear-button').onclick();
+  assert.equal(get('candidate-panel').hidden, true);
+  console.log('UI: ranked candidates, manual selection, follow-up, reset, and abstention passed.');
 })().catch(error => { console.error(error); process.exitCode = 1; });

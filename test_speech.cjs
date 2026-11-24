@@ -38,7 +38,7 @@ const context = vm.createContext({
   window: {
     addEventListener() {}, scrollTo() {}, AudioContext, SpeechRecognition,
     caches: { async open(name) {
-      assert.equal(name, 'naura-qna-v11');
+      assert.equal(name, 'naura-qna-model-v1');
       return { async match() { return modelCacheAdds ? {} : undefined; }, async add(path) { assert.equal(path, './model-en.tar.gz'); modelCacheAdds++; } };
     } },
     Vosk: {
@@ -83,7 +83,9 @@ const context = vm.createContext({
   assert.match(get('mic-pill').textContent, /Question mode/);
   recognizer.handlers.partialresult({ result: { partial: 'why use lime' } });
   assert.equal(get('question').value, 'why use lime');
+  assert.equal(get('candidate-panel').hidden, false);
   recognizer.handlers.result({ result: { text: 'why use lime if accuracy did not significantly improve' } });
+  assert.match(get('candidate-list').children[0].textContent, /\d+%/);
   assert.match(get('matched-answer').textContent, /22 to 13/);
   await get('mic-button').onclick();
   assert.equal(tracksStopped, 1);

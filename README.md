@@ -8,10 +8,11 @@ Website statis untuk sesi Q&A paper *LIME-Guided Refinement for One-Day-Ahead Ra
 2. Tekan **Prepare offline speech** saat internet masih tersedia. Bila speech lokal browser tidak tersedia, aplikasi memuat model Vosk Inggris yang sudah dibundel (~41 MB). Pemrosesan pertama dapat memakan beberapa menit; status menampilkan waktu yang telah berlalu. Tunggu status **Offline Vosk speech is ready and cached**. Jika lebih dari tiga menit, aplikasi menampilkan galat dan pencarian ketik tetap tersedia.
 3. Izinkan mikrofon, lalu uji satu pertanyaan. **Enter question mode** mulai mendengarkan. **Return to idle** mematikan mikrofon.
 4. Setelah satu jawaban muncul, tekan **Follow-up mode** untuk pertanyaan lanjutan. **New question** memulai ucapan baru dan mempertahankan konteks jawaban terakhir. **Reset context** memulai dari nol.
+   Saat mengetik atau berbicara, panel kanan menampilkan sampai lima kandidat berurutan dengan persentase skor kecocokan. Klik kandidat untuk memeriksa jawabannya secara manual. Pertanyaan pendek atau ambigu tidak membuka jawaban otomatis.
 5. Setelah halaman dan model siap, matikan Wi-Fi dan coba lagi. Jangan menghapus data situs atau cache browser sebelum acara. Tunggu instalasi cache situs selesai sebelum mematikan Wi-Fi.
 6. Jika suara lokal tidak tersedia, ketik pertanyaan di kotak teks. Aplikasi tidak akan beralih diam-diam ke layanan suara cloud.
 
-Audio diproses oleh `SpeechRecognition.processLocally` bila tersedia, atau oleh Vosk WebAssembly di browser. Kedua jalur memproses suara di perangkat. Pencocokan berjalan dengan JavaScript lokal terhadap bank Q&A. Service worker menyimpan halaman, bank, dan kode Vosk; tombol persiapan menyimpan model suara untuk kunjungan berikutnya tanpa internet. Pembukaan pertama situs di Render tetap membutuhkan internet. Berkas model adalah `model-en.tar.gz` (41,166,150 byte).
+Audio diproses oleh `SpeechRecognition.processLocally` bila tersedia, atau oleh Vosk WebAssembly di browser. Kedua jalur memproses suara di perangkat. Pencocokan berjalan dengan JavaScript lokal terhadap bank Q&A. Service worker menyimpan halaman, bank, dan kode Vosk; tombol persiapan menyimpan model suara di cache terpisah agar pembaruan halaman tidak menghapusnya. Pembukaan pertama situs di Render tetap membutuhkan internet. Berkas model adalah `model-en.tar.gz` (41,166,150 byte).
 
 ## Menjalankan lokal
 

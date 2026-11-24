@@ -24,6 +24,7 @@ for (const asset of ['index.html', 'styles.css', 'extras.css', 'vendor/vosk.js',
 }
 assert.ok(fs.existsSync('model-en.tar.gz'), 'Missing offline speech model');
 assert.ok(app.includes("cache.add('./model-en.tar.gz')"), 'Speech model is not cached during preparation');
+assert.ok(worker.includes("key !== MODEL_CACHE"), 'Speech model cache must survive page updates');
 
 assert.equal(bank.length, 201);
 assert.equal(new Set(bank.map(entry => entry.id)).size, bank.length, 'Duplicate entry ID');
@@ -52,4 +53,5 @@ for (const [question, expected] of [
 for (const question of ['What is your favorite food?', 'Tell me about neural networks for image classification', 'LIME', 'What time is lunch?', 'What is the weather in Tokyo tomorrow?', 'Who won the election?']) {
   assert.equal(match(question).match, null, `Unsupported question matched: ${question}`);
 }
+assert.equal(match('lime feature').match, null, 'Ambiguous short query must not auto-answer');
 console.log(`Q&A: ${bank.length} topics, ${bank.reduce((count, entry) => count + 1 + entry.variants.length, 0)} phrasings; matching, follow-ups, DOM IDs, and offline assets passed.`);

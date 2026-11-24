@@ -6,7 +6,7 @@ const ui = {
   empty: $('answer-empty'), content: $('answer-content'), noMatch: $('no-match'), matchPill: $('match-pill'),
   matchBar: $('match-bar'), matchedQuestion: $('matched-question'), matchedAnswer: $('matched-answer'),
   matchedEvidence: $('matched-evidence'),
-  matchedSource: $('matched-source'), alternatives: $('alternatives'), weakCandidate: $('weak-candidate'), copy: $('copy-button'),
+  matchedSource: $('matched-source'), candidatePanel: $('candidate-panel'), candidates: $('candidate-list'), weakCandidate: $('weak-candidate'), copy: $('copy-button'),
   matchedThinking: $('matched-thinking'), matchedKeywords: $('matched-keywords'), followups: $('followups'),
   bankCount: $('bank-count'), categoryTabs: $('category-tabs'), categoryList: $('category-list'),
   offlineDot: $('offline-dot'), offlineLabel: $('offline-label')
@@ -98,19 +98,46 @@ function matchQuestion(query) {
     return { entry, ...base, score: base.shared >= 2 && base.score >= 0.48 && related ? Math.min(1, base.score + 0.05) : base.score };
   }).sort((a, b) => b.score - a.score);
   const top = ranked[0];
-  const ambiguous = top && top.score < 0.76 && ranked[1] && top.score - ranked[1].score < 0.08;
+  const ambiguous = top && top.score < 1 && ranked[1] && top.score - ranked[1].score < 0.08;
   if (!top || top.shared < 2 || top.score < 0.54 || ambiguous) return { match: null, weak: top && top.score > 0.25 ? top : null, ranked };
   return { match: top, weak: null, ranked };
 }
 
 function setMatchPill(label, level) { ui.matchPill.textContent = label; ui.matchPill.className = `pill ${level}`; }
 
-function showEntry(result, ranked, provisional = false) {
+function renderCandidates(ranked, selectedId) {
+  ui.candidatePanel.hidden = false;
+  ui.candidates.replaceChildren();
+  const candidates = ranked.filter(item => item.shared >= 2 && item.score >= 0.25).slice(0, 5);
+  if (!candidates.length) {
+    const message = document.createElement('p');
+    message.textContent = 'No meaningful candidates yet. Add more terms or ask for clarification.';
+    ui.candidates.append(message);
+    return;
+  }
+  candidates.forEach((item, index) => {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'candidate-item';
+    button.textContent = `${index + 1}. ${Math.round(item.score * 100)}% · ${item.entry.question}`;
+    if (item.entry.id === selectedId) button.classList.add('selected');
+    button.onclick = () => {
+      [...ui.candidates.children].forEach(child => child.classList.remove('selected'));
+      button.classList.add('selected');
+      showEntry(item, false, 'candidate');
+    };
+    ui.candidates.append(button);
+  });
+}
+
+function showEntry(result, provisional = false, origin = 'matched') {
   currentMatch = result.entry;
   ui.followup.disabled = false;
   ui.empty.hidden = true; ui.noMatch.hidden = true; ui.content.hidden = false;
   const high = result.score >= 0.76;
-  setMatchPill(`${high ? 'Strong' : 'Moderate'} · ${Math.round(result.score * 100)}%${provisional ? ' provisional' : ''}`, high ? 'high' : 'medium');
+  if (origin === 'browse') setMatchPill('Opened from bank', 'neutral');
+  else if (origin === 'candidate') setMatchPill(`Selected candidate · ${Math.round(result.score * 100)}% · verify`, result.score >= 0.54 ? 'medium' : 'low');
+  else setMatchPill(`${high ? 'Strong' : 'Moderate'} · ${Math.round(result.score * 100)}%${provisional ? ' provisional' : ''}`, high ? 'high' : 'medium');
   ui.matchBar.style.width = `${Math.round(result.score * 100)}%`;
   ui.matchedQuestion.textContent = result.entry.question;
   ui.matchedEvidence.textContent = result.entry.evidence || 'Evidence: study paper';
@@ -118,24 +145,13 @@ function showEntry(result, ranked, provisional = false) {
   ui.matchedThinking.textContent = result.entry.thinking || 'State the claim, the supporting figure, and its limit.';
   ui.matchedKeywords.textContent = result.entry.speakingKeywords?.join(' · ') || result.entry.keywords.join(' · ');
   ui.matchedSource.textContent = result.entry.source;
-  ui.alternatives.replaceChildren();
-  const alternatives = ranked.filter(item => item.entry.id !== result.entry.id && item.shared >= 2 && item.score >= 0.48).slice(0, 2);
-  if (alternatives.length) {
-    const label = document.createElement('span'); label.textContent = 'Other possible matches:'; ui.alternatives.append(label);
-    for (const item of alternatives) {
-      const button = document.createElement('button'); button.type = 'button';
-      button.textContent = `${item.entry.question} (${Math.round(item.score * 100)}%)`;
-      button.onclick = () => showEntry(item, ranked, false);
-      ui.alternatives.append(button);
-    }
-  }
   ui.followups.replaceChildren();
   const followups = (result.entry.followUps || []).map(id => bank.find(item => item.id === id)).filter(Boolean);
   if (followups.length) {
     const label = document.createElement('span'); label.textContent = 'Related follow-up questions:'; ui.followups.append(label);
     for (const item of followups) {
       const button = document.createElement('button'); button.type = 'button'; button.textContent = item.question;
-      button.onclick = () => showEntry({ entry: item, score: 1 }, [], false);
+      button.onclick = () => showEntry({ entry: item, score: 1 }, false, 'browse');
       ui.followups.append(button);
     }
   }
@@ -151,7 +167,7 @@ function renderCategories() {
     ui.categoryList.replaceChildren();
     for (const item of bank.filter(entry => (entry.category || 'Lainnya') === category)) {
       const button = document.createElement('button'); button.type = 'button'; button.textContent = item.question;
-      button.onclick = () => { showEntry({ entry: item, score: 1 }, [], false); window.scrollTo({ top: 250, behavior: 'smooth' }); };
+      button.onclick = () => { showEntry({ entry: item, score: 1 }, false, 'browse'); window.scrollTo({ top: 250, behavior: 'smooth' }); };
       ui.categoryList.append(button);
     }
     [...ui.categoryTabs.children].forEach(button => button.classList.toggle('selected', button.textContent === category));
@@ -167,12 +183,13 @@ function updateMatch(provisional = false) {
   const query = ui.question.value.trim();
   currentMatch = null;
   if (!followupMode) ui.followup.disabled = true;
-  if (!query) { ui.empty.hidden = false; ui.content.hidden = true; ui.noMatch.hidden = true; setMatchPill('Waiting', 'neutral'); return; }
+  if (!query) { ui.candidatePanel.hidden = true; ui.candidates.replaceChildren(); ui.empty.hidden = false; ui.content.hidden = true; ui.noMatch.hidden = true; setMatchPill('Waiting', 'neutral'); return; }
   const result = matchQuestion(query);
-  if (result.match) return showEntry(result.match, result.ranked, provisional);
+  renderCandidates(result.ranked, result.match?.entry.id);
+  if (result.match) return showEntry(result.match, provisional);
   ui.empty.hidden = true; ui.content.hidden = true; ui.noMatch.hidden = false;
   setMatchPill('No reliable match', 'low');
-  ui.weakCandidate.textContent = result.weak ? `Closest candidate: “${result.weak.entry.question}” · ${Math.round(result.weak.score * 100)}%. Check manually.` : '';
+  ui.weakCandidate.textContent = result.weak ? 'Review the candidates above before choosing an answer.' : '';
 }
 
 function restartQuestionCapture() {
@@ -238,7 +255,7 @@ async function prepareSpeech() {
     ui.status.textContent = 'Caching the bundled English model for offline use (about 41 MB)…';
     if (window.caches) {
       try {
-        const cache = await window.caches.open('naura-qna-v11');
+        const cache = await window.caches.open('naura-qna-model-v1');
         if (!await cache.match('./model-en.tar.gz')) await cache.add('./model-en.tar.gz');
         modelCached = true;
       } catch { modelCached = false; }

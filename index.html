@@ -41,20 +41,23 @@
 
       <div class="answer-panel" aria-live="polite">
         <div class="section-head"><div><div class="eyebrow">02 / MATCH</div><h2>Answer prompt</h2></div><span id="match-pill" class="pill neutral">Waiting</span></div>
+        <div id="candidate-panel" class="candidate-panel" hidden>
+          <div class="candidate-head"><strong>Closest questions</strong><span>Match score, not answer certainty</span></div>
+          <div id="candidate-list" class="candidate-list"></div>
+        </div>
         <div id="answer-empty" class="empty-state"><div class="empty-icon">?</div><h3>No question yet</h3><p>Speak or type a question. The best supported match will appear here.</p></div>
         <div id="answer-content" hidden>
           <div class="match-meter"><div id="match-bar"></div></div>
-          <p class="score-note">Text match score, not answer certainty. Check the matched question.</p>
+          <p class="score-note">Match score may include follow-up context. Check the matched question before answering.</p>
           <p class="micro-label">MATCHED QUESTION</p>
           <h3 id="matched-question"></h3>
           <p id="matched-evidence" class="evidence-tag"></p>
           <p id="matched-answer" class="answer-text"></p>
           <div class="answer-aid"><div><span>HOW TO REASON</span><p id="matched-thinking"></p></div><div><span>KEYWORDS FOR YOUR OWN ANSWER</span><p id="matched-keywords"></p></div></div>
           <div class="source-row"><span id="matched-source"></span><button id="copy-button" class="text-button" type="button">Copy answer</button></div>
-          <div id="alternatives" class="alternatives"></div>
           <div id="followups" class="alternatives"></div>
         </div>
-        <div id="no-match" class="no-match" hidden><div class="empty-icon">!</div><h3>No reliable match</h3><p>Ask for clarification or type the main terms. Do not use an unrelated answer.</p><div id="weak-candidate"></div></div>
+        <div id="no-match" class="no-match" hidden><div class="empty-icon">!</div><h3>No reliable match</h3><p>Review the candidates above, ask for clarification, or add more terms. Do not use an unrelated answer.</p><div id="weak-candidate"></div></div>
       </div>
     </section>
 
