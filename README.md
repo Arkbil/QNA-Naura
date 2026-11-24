@@ -18,7 +18,7 @@ Audio diproses oleh `SpeechRecognition.processLocally` bila tersedia, atau oleh 
 
 Di folder ini jalankan `python -m http.server 8765`, lalu buka `http://localhost:8765`. Mikrofon tidak bekerja dari berkas `file://`; gunakan localhost atau HTTPS.
 
-Jika drive C: hampir penuh, jalankan `powershell -ExecutionPolicy Bypass -File .\open-qna-browser.ps1 -Url "https://alamat-situs.onrender.com"`. Skrip membuka Chrome (atau Edge) dengan profil dan folder sementara di drive D:, sehingga model Vosk punya ruang untuk diekstrak. Izinkan mikrofon lagi pada profil baru. Ganti URL dengan alamat Render yang sebenarnya; tanpa `-Url`, skrip membuka localhost.
+Jika drive C: hampir penuh, jalankan `powershell -ExecutionPolicy Bypass -File .\open-qna-browser.ps1 -Url "https://alamat-situs.onrender.com"`. Skrip membuka Edge (atau Chrome) dengan profil dan folder sementara di drive D:, sehingga model Vosk punya ruang untuk diekstrak. Izinkan mikrofon lagi pada profil baru. Ganti URL dengan alamat Render yang sebenarnya; tanpa `-Url`, skrip membuka localhost.
 
 ## Deploy Render
 
