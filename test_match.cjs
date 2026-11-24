@@ -30,8 +30,11 @@ assert.ok(app.includes("loadBundledVoskModel('./model-en.tar.gz')"), 'Speech mod
 
 assert.equal(bank.length, 201);
 assert.equal(new Set(bank.map(entry => entry.id)).size, bank.length, 'Duplicate entry ID');
+assert.equal(Object.keys(more).length, bank.length, 'Every topic needs an additional spoken question');
+assert.equal(Object.keys(expanded).length + Object.keys(extensions).length, bank.length, 'Every topic needs an expanded answer');
 for (const entry of bank) {
   assert.ok(entry.category && entry.thinking && entry.answer && entry.source, `Incomplete entry: ${entry.id}`);
+  assert.ok(entry.answer.split(/\s+/).length >= 80, `Answer too short: ${entry.id}`);
   for (const question of [entry.question, ...entry.variants]) {
     assert.equal(match(question).match?.entry.id, entry.id, `Wrong match: ${question}`);
   }
@@ -47,7 +50,9 @@ for (const [question, expected] of [
   ['How stable was LIME across random seeds?', 'lime_stability'],
   ['Why use a 2% pruning threshold?', 'why_two_percent'],
   ['What did the ablation study show?', 'ablation'],
-  ['Is there data leakage in the evaluation?', 'leakage']
+  ['Is there data leakage in the evaluation?', 'leakage'],
+  ['Would this model work in Surabaya without retraining?', 'single_station'],
+  ['How many trees are in the XGBoost model?', 'hyperparam_values']
 ]) {
   const result = match(question);
   assert.equal(result.match?.entry.id, expected, `${question}: got ${result.match?.entry.id || 'none'}`);

@@ -50,6 +50,7 @@ const aliases = new Map(Object.entries({
   threshold:'threshold', ambang:'threshold', cutoff:'threshold',
   ablation:'ablasi', ablasi:'ablasi',
   station:'stasiun', stasiun:'stasiun', bandung:'bandung', generalize:'general', generalization:'general', generalisasi:'general', digeneralisasi:'general',
+  cities:'city', surabaya:'city', jakarta:'city', yogyakarta:'city', semarang:'city', medan:'city', retrain:'train', retraining:'train', trained:'train',
   stable:'stabil', stability:'stabil', stabilitas:'stabil', stabil:'stabil',
   seed:'seed', seeds:'seed',
   prune:'pruning', pruning:'pruning', pemangkasan:'pruning',
@@ -97,6 +98,7 @@ function scoreEntry(query, entry) {
     if (score > best) { best = score; shared = overlap; }
   }
   const keywordHits = tokenize(entry.keywords.join(' ')).filter(term => q.includes(term)).length;
+  if (keywordHits === 0 && best < 0.7) return { score: 0, shared: 0 };
   return { score: Math.min(0.96, best + Math.min(0.06, keywordHits * 0.02)), shared };
 }
 
@@ -109,7 +111,8 @@ function matchQuestion(query) {
   }).sort((a, b) => b.score - a.score);
   const top = ranked[0];
   const ambiguous = top && ranked[1] && top.score - ranked[1].score < 0.08 && !(top.score === 1 && ranked[1].score < 1);
-  if (!top || top.shared < 2 || top.score < 0.54 || ambiguous) return { match: null, weak: top && top.score > 0.25 ? top : null, ranked };
+  const clearLongQuestion = tokenize(query).length >= 6 && top?.shared >= 3 && top.score >= 0.45 && top.score - (ranked[1]?.score || 0) >= 0.12;
+  if (!top || top.shared < 2 || (top.score < 0.54 && !clearLongQuestion) || ambiguous) return { match: null, weak: top && top.score > 0.25 ? top : null, ranked };
   return { match: top, weak: null, ranked };
 }
 

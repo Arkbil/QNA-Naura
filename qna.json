@@ -128,7 +128,8 @@
       "generalize",
       "other regions",
       "station",
-      "bandung"
+      "bandung",
+      "city"
     ],
     "answer": "We cannot claim generalization beyond this station. Bandung has its own local climate pattern, and the study uses only WMO 96783. Replication at other BMKG stations is the next step before making broader claims.",
     "source": "Paper pp. 2, 6 · Slide 16"

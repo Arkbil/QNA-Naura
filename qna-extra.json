@@ -484,6 +484,7 @@
       "learning rate",
       "max depth",
       "300 trees",
+      "number of trees",
       "subsample",
       "colsample"
     ],
