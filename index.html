@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#102c39">
+  <meta name="description" content="Offline-ready Q&A desk for the Bandung rainfall XAI paper.">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="stylesheet" href="./styles.css">
+  <link rel="stylesheet" href="./extras.css">
+  <title>Q&A Desk · Rainfall XAI</title>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><span class="brand-mark">N</span><span>NAURA <span class="brand-light">/ Q&A DESK</span></span></div>
+    <div class="top-status"><span id="offline-dot" class="dot"></span><span id="offline-label">Checking connection</span></div>
+  </header>
+
+  <main>
+    <section class="intro" aria-labelledby="page-title">
+      <div class="eyebrow">CONFERENCE SUPPORT · LOCAL FIRST</div>
+      <h1 id="page-title">A clear answer, when the question comes.</h1>
+      <p>Speech and matching run on this device. If the Q&A bank has no reliable match, the desk says so.</p>
+    </section>
+
+    <section class="workspace" aria-label="Asisten Q&A">
+      <div class="input-panel">
+        <div class="section-head"><div><div class="eyebrow">01 / LISTEN</div><h2>Incoming question</h2></div><span id="mic-pill" class="pill neutral">Idle mode</span></div>
+        <label for="language">Question language</label>
+        <select id="language"><option value="en-US">English (US)</option></select>
+        <p id="speech-status" class="status" role="status">Prepare local speech once. If Chrome's speech pack is unavailable, the built-in Vosk model will load.</p>
+        <div class="button-row">
+          <button id="prepare-button" class="button secondary" type="button">Prepare offline speech</button>
+          <button id="mic-button" class="button primary" type="button">Enter question mode</button>
+        </div>
+        <label class="question-label" for="question">Transcript / type a question</label>
+        <textarea id="question" rows="5" spellcheck="false" placeholder="Contoh: Why use LIME if the accuracy gain is not significant?"></textarea>
+        <div class="input-footer"><span id="transcript-note">Typing also searches the answer bank.</span><button id="clear-button" class="text-button" type="button">New question</button></div>
+        <div class="context-row"><span id="context-label">Context: main question</span><div><button id="followup-button" class="button secondary" type="button" disabled>Follow-up mode</button><button id="reset-button" class="text-button" type="button">Reset context</button></div></div>
+      </div>
+
+      <div class="answer-panel" aria-live="polite">
+        <div class="section-head"><div><div class="eyebrow">02 / MATCH</div><h2>Answer prompt</h2></div><span id="match-pill" class="pill neutral">Waiting</span></div>
+        <div id="answer-empty" class="empty-state"><div class="empty-icon">?</div><h3>No question yet</h3><p>Speak or type a question. The best supported match will appear here.</p></div>
+        <div id="answer-content" hidden>
+          <div class="match-meter"><div id="match-bar"></div></div>
+          <p class="score-note">Text match score, not answer certainty. Check the matched question.</p>
+          <p class="micro-label">MATCHED QUESTION</p>
+          <h3 id="matched-question"></h3>
+          <p id="matched-evidence" class="evidence-tag"></p>
+          <p id="matched-answer" class="answer-text"></p>
+          <div class="answer-aid"><div><span>HOW TO REASON</span><p id="matched-thinking"></p></div><div><span>KEYWORDS FOR YOUR OWN ANSWER</span><p id="matched-keywords"></p></div></div>
+          <div class="source-row"><span id="matched-source"></span><button id="copy-button" class="text-button" type="button">Copy answer</button></div>
+          <div id="alternatives" class="alternatives"></div>
+          <div id="followups" class="alternatives"></div>
+        </div>
+        <div id="no-match" class="no-match" hidden><div class="empty-icon">!</div><h3>No reliable match</h3><p>Ask for clarification or type the main terms. Do not use an unrelated answer.</p><div id="weak-candidate"></div></div>
+      </div>
+    </section>
+
+    <section class="reference" aria-labelledby="reference-title">
+      <div class="section-head"><div><div class="eyebrow">03 / REFERENCE</div><h2 id="reference-title">Numbers worth remembering</h2></div><span class="small-note">Source: main paper</span></div>
+      <div class="facts"><div><strong>3,910</strong><span>raw rows</span></div><div><strong>129</strong><span>hold-out days</span></div><div><strong>0.8138</strong><span>baseline F1</span></div><div><strong>0.8276</strong><span>Path A F1</span></div><div><strong>22 → 13</strong><span>baseline → Path A features</span></div><div><strong>16</strong><span>time-series CV folds</span></div></div>
+      <p class="guardrail"><strong>Safe conclusion:</strong> “LIME gave us a stable diagnostic and a smaller model. The accuracy difference was not statistically significant.”</p>
+    </section>
+    <section class="reference" aria-labelledby="browse-title">
+      <div class="section-head"><div><div class="eyebrow">04 / BROWSE THE BANK</div><h2 id="browse-title">Question domains</h2></div><span id="bank-count" class="small-note"></span></div>
+      <div id="category-tabs" class="category-tabs"></div>
+      <div id="category-list" class="category-list"></div>
+    </section>
+  </main>
+
+  <footer>The answer bank is stored in this website. Audio and transcripts are never sent to a server.</footer>
+  <script src="./vendor/vosk.js" defer></script>
+  <script src="./app.js" defer></script>
+</body>
+</html>

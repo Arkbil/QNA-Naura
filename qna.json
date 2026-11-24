@@ -1,0 +1,525 @@
+[
+  {
+    "id": "contribution",
+    "question": "What is the main contribution of this study?",
+    "variants": [
+      "What is novel about your research?",
+      "What is your research gap?",
+      "Why refine the baseline beyond improving accuracy?",
+      "Why did you still feel the need to refine the baseline model?",
+      "Why did you still feel the need to refine it beyond improving accuracy?"
+    ],
+    "keywords": [
+      "contribution",
+      "novelty",
+      "research gap"
+    ],
+    "answer": "We use LIME as feedback for feature refinement, then compare it with XGBoost's built-in gain importance under the same data splits and hyperparameters. We also test significance, LIME stability, and ablation. The main finding is a more compact, interpretable model, without a proven accuracy advantage.",
+    "source": "Paper pp. 1–2, 5–6 · Slides 3–4, 15"
+  },
+  {
+    "id": "why_lime",
+    "question": "Why use LIME if it did not significantly improve accuracy?",
+    "variants": [
+      "Why do you need LIME?",
+      "What practical value does LIME add?"
+    ],
+    "keywords": [
+      "lime",
+      "value",
+      "useful",
+      "accuracy",
+      "significant"
+    ],
+    "answer": "LIME was useful as a diagnostic and feature-selection aid. It identified humidity as dominant, flagged day of year for re-encoding, and supported a reduction from 22 to 13 features with comparable accuracy. We do not claim that LIME itself caused an accuracy gain.",
+    "source": "Paper pp. 3–6 · Slides 9–12, 15"
+  },
+  {
+    "id": "lime_vs_gain",
+    "question": "Why compare LIME with XGBoost gain importance?",
+    "variants": [
+      "What is the purpose of Path B?",
+      "Why is built-in feature importance the comparator?"
+    ],
+    "keywords": [
+      "lime",
+      "gain",
+      "importance",
+      "comparator",
+      "path b"
+    ],
+    "answer": "Gain importance is a practical baseline already available in XGBoost. Comparing Path A with Path B tests whether an extra explanation method adds value beyond what the model already provides. Path B also produced a smaller model and a small numerical improvement, so the comparison matters.",
+    "source": "Paper pp. 1–3, 4–6 · Slides 4, 6–7, 10"
+  },
+  {
+    "id": "why_xgboost",
+    "question": "Why did you choose XGBoost?",
+    "variants": [
+      "Why XGBoost instead of another classifier?",
+      "Kenapa memilih XGBoost?"
+    ],
+    "keywords": [
+      "xgboost",
+      "classifier",
+      "algorithm"
+    ],
+    "answer": "XGBoost is a strong model for tabular data, which matches the daily BMKG observations. We fixed the same tuned XGBoost settings across all three feature sets so that the refinement comparison was more controlled. This paper does not claim XGBoost is the best possible model for Bandung.",
+    "source": "Paper pp. 1, 3 · Slides 3, 5, 19"
+  },
+  {
+    "id": "why_binary",
+    "question": "Why predict rain or no rain instead of rainfall amount?",
+    "variants": [
+      "Why is this a binary classification task?",
+      "Why not predict millimeters of rainfall?"
+    ],
+    "keywords": [
+      "binary",
+      "classification",
+      "regression",
+      "amount",
+      "millimeters"
+    ],
+    "answer": "The study targets a daily operational decision: whether rain is expected tomorrow. That gives a clear binary outcome, defined as next-day rainfall of at least 0.5 mm. Predicting rainfall amount would be a separate task and is outside this paper's scope.",
+    "source": "Paper pp. 1–2 · Slides 3, 5"
+  },
+  {
+    "id": "threshold_rain",
+    "question": "Why use 0.5 mm as the rain threshold?",
+    "variants": [
+      "What is your definition of a rainy day?",
+      "Why is the target RR at least 0.5 millimeters?"
+    ],
+    "keywords": [
+      "0.5",
+      "threshold",
+      "rain",
+      "rr"
+    ],
+    "answer": "We define rain as next-day RR of at least 0.5 mm, to separate measurable rain from dew or very light drizzle. It is an operational definition for this study. Other thresholds could change class balance and model performance, so they should be tested separately.",
+    "source": "Paper pp. 1–2 · Slide 5"
+  },
+  {
+    "id": "dataset",
+    "question": "Where did the data come from and how large is it?",
+    "variants": [
+      "What dataset did you use?",
+      "How many observations are in the study?"
+    ],
+    "keywords": [
+      "dataset",
+      "data",
+      "bmkg",
+      "kaggle",
+      "observations"
+    ],
+    "answer": "We used daily observations from the Bandung Geophysical Station, WMO 96783, covering 2010 to 2020. The data were obtained from BMKG through a curated Kaggle repository. There were 3,910 raw rows; 3,243 remained after removing rows with missing rainfall, and 3,236 after feature engineering.",
+    "source": "Paper p. 2 · Slides 5, 20"
+  },
+  {
+    "id": "single_station",
+    "question": "Can the results generalize beyond Bandung?",
+    "variants": [
+      "Why only one station?",
+      "Will this work in other regions?",
+      "Would this work in Jakarta?"
+    ],
+    "keywords": [
+      "generalize",
+      "other regions",
+      "station",
+      "bandung"
+    ],
+    "answer": "We cannot claim generalization beyond this station. Bandung has its own local climate pattern, and the study uses only WMO 96783. Replication at other BMKG stations is the next step before making broader claims.",
+    "source": "Paper pp. 2, 6 · Slide 16"
+  },
+  {
+    "id": "split",
+    "question": "How were the training and test data split?",
+    "variants": [
+      "Did you use a random split?",
+      "How many training and hold-out days were there?"
+    ],
+    "keywords": [
+      "split",
+      "training",
+      "test",
+      "holdout",
+      "chronological"
+    ],
+    "answer": "We split chronologically, not randomly. After feature engineering, 3,107 rows were used for training and the last 129 observed days, from 3 July to 30 December 2020, for hold-out testing. Time-series cross-validation used expanding windows.",
+    "source": "Paper pp. 2–3 · Slides 5, 19"
+  },
+  {
+    "id": "holdout_small",
+    "question": "Is the 129-day hold-out set too small?",
+    "variants": [
+      "Why only 129 test days?",
+      "Does the test set cover every season?"
+    ],
+    "keywords": [
+      "129",
+      "holdout",
+      "small",
+      "season",
+      "test"
+    ],
+    "answer": "The hold-out set is limited. It covers July to December 2020, including the dry season and transition but only November and December of the rainy season. We therefore added 16-fold time-series cross-validation across 2013 to 2020. We still treat the hold-out gain cautiously.",
+    "source": "Paper pp. 3, 6 · Slides 5, 11, 16"
+  },
+  {
+    "id": "missing_rr",
+    "question": "How did you handle missing rainfall values?",
+    "variants": [
+      "Why did you remove rows with missing RR?",
+      "What happened to the missing data?"
+    ],
+    "keywords": [
+      "missing",
+      "rr",
+      "rainfall",
+      "imputation"
+    ],
+    "answer": "Rows with missing RR were removed because RR defines the target and several lag features. Other weather fields were imputed using training-set statistics. We avoided interpolation because it could use later observations. Removing RR rows introduced a separate calendar-alignment limitation, which we report explicitly.",
+    "source": "Paper pp. 2, 5–6 · Slide 20"
+  },
+  {
+    "id": "horizon_misalignment",
+    "question": "Is the target always exactly the next calendar day?",
+    "variants": [
+      "Does dropping missing RR break H plus one forecasting?",
+      "Are the lag features really previous-day values?",
+      "Could the missing rainfall days affect the next-day forecast?",
+      "Could your model really forecast tomorrow after deleting missing rainfall days?"
+    ],
+    "keywords": [
+      "tomorrow",
+      "calendar",
+      "missing",
+      "lag",
+      "misalignment"
+    ],
+    "answer": "No. Because missing-RR rows were removed before feature construction, about 15% of targets refer to the next observed row rather than the next calendar day; in the hold-out set it is 23.3%. This is a horizon-misalignment limitation, not future-data leakage. On exact next-day targets, the three models still showed no significant pairwise difference.",
+    "source": "Paper p. 5 · Backup slide 20"
+  },
+  {
+    "id": "leakage",
+    "question": "Is there data leakage in the evaluation?",
+    "variants": [
+      "Is the cross-validation fully independent?",
+      "Did using hold-out data to rank features cause leakage?"
+    ],
+    "keywords": [
+      "leakage",
+      "cv",
+      "holdout",
+      "feature selection",
+      "evaluation"
+    ],
+    "answer": "There is no future-value leakage in the lag and rolling features: they use current and earlier observations. However, the LIME ranking used hold-out feature values without labels, while gain importance used training data. Also, tuning and feature selection were not fully nested within cross-validation, and one CV fold overlaps the hold-out period. We report these as evaluation limitations and would move selection inside each training fold in future work.",
+    "source": "Paper pp. 2–3, 6 · Slide 16"
+  },
+  {
+    "id": "unequal_paths",
+    "question": "Is the Path A versus Path B comparison fully fair?",
+    "variants": [
+      "Did Path A get more domain features than Path B?",
+      "Why do the two paths add different features?"
+    ],
+    "keywords": [
+      "path a",
+      "path b",
+      "fair",
+      "domain",
+      "features"
+    ],
+    "answer": "The paths share the data, split, 2% pruning rule, and XGBoost hyperparameters, but they do not receive identical feature engineering. Path A adds three meteorology-derived features and cyclic day-of-year encoding; Path B adds one humidity-trend feature. This limits causal attribution. A common candidate-feature pool would make the next comparison fairer.",
+    "source": "Paper pp. 3, 6 · Slides 6–7, 16"
+  },
+  {
+    "id": "why_two_percent",
+    "question": "Why did you use a 2% feature-pruning threshold?",
+    "variants": [
+      "Was the two-percent cutoff optimized?",
+      "How did you select the importance threshold?"
+    ],
+    "keywords": [
+      "2%",
+      "2 percent",
+      "threshold",
+      "pruning",
+      "cutoff"
+    ],
+    "answer": "The 2% threshold was fixed in advance and applied to both paths. It was a convention, not an optimized threshold, so we do not claim it is ideal. One feature, ddd_x, was borderline and crossed the threshold in some LIME seed runs.",
+    "source": "Paper pp. 3, 5 · Slides 7, 18"
+  },
+  {
+    "id": "lime_aggregate",
+    "question": "How did you turn local LIME explanations into a global ranking?",
+    "variants": [
+      "How was aggregate LIME calculated?",
+      "Did LIME explain all test samples?"
+    ],
+    "keywords": [
+      "aggregate",
+      "local",
+      "global",
+      "ranking",
+      "lime"
+    ],
+    "answer": "We explained all 129 hold-out instances. For each feature, we averaged the absolute LIME weight across those instances, assigning zero when the feature was absent from a local top-ten explanation. We then normalized the shares and used them to guide pruning. This ranking measures repeated local prominence, not causal effect.",
+    "source": "Paper p. 3 · Slides 6, 9"
+  },
+  {
+    "id": "lime_stability",
+    "question": "How stable were the LIME explanations?",
+    "variants": [
+      "Did you test LIME across random seeds?",
+      "What does Kendall's W of 0.976 mean?"
+    ],
+    "keywords": [
+      "lime",
+      "stability",
+      "seed",
+      "kendall",
+      "0.976"
+    ],
+    "answer": "We repeated the aggregate ranking over ten seeds on the same 129 instances. Kendall's W was 0.976 for the baseline; the top five features were identical across runs, and RH_avg ranked first every time. This shows run-to-run consistency, not that every attribution is physically correct.",
+    "source": "Paper p. 5 · Slides 9, 18"
+  },
+  {
+    "id": "humidity",
+    "question": "Why is humidity the dominant feature?",
+    "variants": [
+      "What did LIME reveal about RH_avg?",
+      "Does the humidity result make meteorological sense?",
+      "Why was RH the strongest input?"
+    ],
+    "keywords": [
+      "humidity",
+      "rh_avg",
+      "dominant",
+      "meteorology"
+    ],
+    "answer": "In the baseline, RH_avg contributed 42.5% of the total aggregate LIME weight and ranked first in all ten seed runs. Higher relative humidity is consistent with air being closer to saturation and greater rain likelihood. The LIME quartile breakpoints are model-explanation bins, not physical weather thresholds.",
+    "source": "Paper pp. 3–4 · Slide 9"
+  },
+  {
+    "id": "dewpoint",
+    "question": "Why did you add dew point and temperature–dew point spread?",
+    "variants": [
+      "What does T minus Td spread mean?",
+      "Are dew point features independent information?"
+    ],
+    "keywords": [
+      "dew point",
+      "spread",
+      "saturation",
+      "humidity",
+      "t td"
+    ],
+    "answer": "Dew point and temperature–dew point spread express proximity to atmospheric saturation in physically meaningful terms. They are deterministic functions of temperature and relative humidity, not independent observations. In the training data, spread and RH_avg were almost perfectly negatively correlated, so we interpret their high rank as a re-expression of the humidity signal.",
+    "source": "Paper pp. 3–4 · Slides 7, 13"
+  },
+  {
+    "id": "cyclic",
+    "question": "Why encode day of year as sine and cosine?",
+    "variants": [
+      "What is cyclic day-of-year encoding?",
+      "Why did you replace raw day of year?"
+    ],
+    "keywords": [
+      "day of year",
+      "sine",
+      "cosine",
+      "cyclic",
+      "seasonality"
+    ],
+    "answer": "Day of year is cyclical: late December and early January are close in time, but raw integer codes place them far apart. Sine and cosine preserve that circular relationship. LIME ranked raw day of year second and prompted us to test the encoding; ablation showed that encoding, not pruning, explained Path A's hold-out F1 increase.",
+    "source": "Paper pp. 3, 5 · Slides 7, 12"
+  },
+  {
+    "id": "ablation",
+    "question": "What did the ablation study show?",
+    "variants": [
+      "Where did Path A's F1 improvement come from?",
+      "Did LIME feature selection improve performance?"
+    ],
+    "keywords": [
+      "ablation",
+      "cyclic",
+      "pruning",
+      "f1",
+      "improvement"
+    ],
+    "answer": "Cyclic encoding alone reached the same hold-out F1 as full Path A: 0.8276. LIME-guided pruning alone remained at the baseline F1 of 0.8138. Pruning did reduce the baseline from 22 to 9 features without a detectable accuracy loss. So the hold-out lift came from encoding, while LIME's supported contribution was diagnosis and parsimony.",
+    "source": "Paper p. 5 · Slide 12"
+  },
+  {
+    "id": "performance",
+    "question": "What were the main model performance results?",
+    "variants": [
+      "What are the F1 scores of baseline, Path A, and Path B?",
+      "Which model performed best?"
+    ],
+    "keywords": [
+      "f1",
+      "baseline",
+      "path a",
+      "path b",
+      "performance",
+      "score"
+    ],
+    "answer": "On the 129-day hold-out set, F1 was 0.8138 for baseline, 0.8276 for LIME-guided Path A, and 0.8219 for gain-guided Path B. Path A classified 104 days correctly versus 102 and 103. In 16-fold CV, mean F1 was about 0.828 to 0.829 for all three. The differences were not statistically significant.",
+    "source": "Paper pp. 3–5 · Slides 8, 10–11"
+  },
+  {
+    "id": "baseline_errors",
+    "question": "What kinds of errors did the baseline make?",
+    "variants": [
+      "How many false positives and false negatives were there?",
+      "What does the confusion matrix show?"
+    ],
+    "keywords": [
+      "false positive",
+      "false negative",
+      "confusion matrix",
+      "errors"
+    ],
+    "answer": "Among 57 dry and 72 rainy hold-out days, the baseline correctly classified 43 dry days and 59 rainy days. It made 14 false alarms and missed 13 rainy days. That is 102 correct predictions out of 129.",
+    "source": "Paper p. 3 · Slide 8"
+  },
+  {
+    "id": "f1_choice",
+    "question": "Why use F1-score and AUC-PR?",
+    "variants": [
+      "Why not report accuracy alone?",
+      "Why is F1 the tuning objective?"
+    ],
+    "keywords": [
+      "f1",
+      "auc-pr",
+      "accuracy",
+      "class imbalance",
+      "metric"
+    ],
+    "answer": "Rainy days made up about 59.9% of the cleaned data, so accuracy alone could hide the balance between missed rain and false alarms. F1 combines precision and recall at the decision threshold. AUC-PR adds a threshold-independent view focused on the rain class. We also report AUC-ROC.",
+    "source": "Paper pp. 3–4 · Slides 5, 8"
+  },
+  {
+    "id": "significance",
+    "question": "Were the differences statistically significant?",
+    "variants": [
+      "What were the McNemar test results?",
+      "Can you claim Path A is better?",
+      "What is the p-value for Path A versus baseline?"
+    ],
+    "keywords": [
+      "significant",
+      "mcnemar",
+      "wilcoxon",
+      "p value",
+      "statistical"
+    ],
+    "answer": "No pairwise difference was statistically significant. On the hold-out set, baseline versus Path A had McNemar p = 0.625; Holm-adjusted p-values for all three pairs were 1.000. Per-fold Wilcoxon tests were also non-significant. This means we did not detect a difference; it does not prove the models are equivalent.",
+    "source": "Paper pp. 4–5 · Slide 11"
+  },
+  {
+    "id": "mcnemar",
+    "question": "Why use McNemar's test?",
+    "variants": [
+      "What does McNemar test measure here?",
+      "Why use paired testing?"
+    ],
+    "keywords": [
+      "mcnemar",
+      "paired",
+      "discordant",
+      "test"
+    ],
+    "answer": "The models predict the same test days, so their outcomes are paired. McNemar's test focuses on days where one model is correct and the other is wrong. For baseline versus Path A on the hold-out set, Path A fixed three baseline errors and introduced one new error; that difference was not significant.",
+    "source": "Paper pp. 3, 5 · Slide 11"
+  },
+  {
+    "id": "cv",
+    "question": "How did the time-series cross-validation work?",
+    "variants": [
+      "Why use expanding-window validation?",
+      "How many CV folds and predictions were there?"
+    ],
+    "keywords": [
+      "cv",
+      "time series",
+      "expanding window",
+      "fold",
+      "validation"
+    ],
+    "answer": "We used 16 expanding-window folds, with at least three training years in the first fold and test windows of up to 180 calendar days. This produced 2,212 pooled predictions across 2013 to 2020. The design respects time order, though tuning and feature selection were not fully nested within each fold.",
+    "source": "Paper pp. 3, 5–6 · Slides 11, 19"
+  },
+  {
+    "id": "autocorrelation",
+    "question": "Does autocorrelation invalidate pooled McNemar tests?",
+    "variants": [
+      "Are consecutive test days independent?",
+      "Why add fold-level Wilcoxon tests?"
+    ],
+    "keywords": [
+      "autocorrelation",
+      "independent",
+      "mcnemar",
+      "wilcoxon",
+      "days"
+    ],
+    "answer": "Consecutive weather days can be correlated, while pooled McNemar treats observations as independent. We therefore also compared the 16 per-fold F1 scores with Wilcoxon and paired t-tests. Those tests were non-significant too. The dependence remains a limitation of the pooled p-values.",
+    "source": "Paper pp. 3, 5–6 · Slide 11"
+  },
+  {
+    "id": "shap",
+    "question": "How does this LIME study compare with the SHAP companion study?",
+    "variants": [
+      "Why not use SHAP here?",
+      "Did SHAP perform better?"
+    ],
+    "keywords": [
+      "shap",
+      "lime",
+      "companion",
+      "comparison"
+    ],
+    "answer": "This paper focuses on LIME. A companion study, described as under review in the paper, uses TreeSHAP with the same Path B comparator. The presentation reports SHAP-guided hold-out F1 of 0.8356 and CV mean F1 of 0.829, but its difference from baseline was also not significant. We should not use that separate result to claim SHAP is definitively better.",
+    "source": "Paper p. 1 · Slide 14 (companion figures)"
+  },
+  {
+    "id": "case",
+    "question": "What happened in the 22 December 2020 case study?",
+    "variants": [
+      "Did Path A fix the December 22 error?",
+      "How did the local LIME explanation change?"
+    ],
+    "keywords": [
+      "december 22",
+      "22 december",
+      "case study",
+      "false negative"
+    ],
+    "answer": "Both baseline and Path A missed the next-day light-rain event, each assigning rain probability 0.491. The baseline explanation emphasized low relative humidity; Path A expressed the same dry-air signal as a large temperature–dew point spread. It illustrates an explanation change, not an error correction.",
+    "source": "Paper pp. 3, 5 · Slide 13"
+  },
+  {
+    "id": "future",
+    "question": "What would you improve in future work?",
+    "variants": [
+      "What are the next research steps?",
+      "How would you fix the evaluation limitations?"
+    ],
+    "keywords": [
+      "future",
+      "next steps",
+      "improve",
+      "limitations"
+    ],
+    "answer": "First, compute explanation-based feature selection using training data within each validation fold, with the same candidate-feature pool for both paths. Second, preserve exact calendar-day alignment and evaluate more BMKG stations. Hourly nowcasting with radar data is a longer-term extension.",
+    "source": "Paper p. 6 · Slide 16"
+  }
+]

@@ -1,0 +1,1130 @@
+[
+  {
+    "id": "ai_boosting",
+    "category": "AI technical · XGBoost",
+    "question": "How does gradient boosting work in XGBoost?",
+    "variants": [
+      "What does boosting mean here?",
+      "Are XGBoost trees trained independently?",
+      "What is XGBoost?"
+    ],
+    "keywords": [
+      "gradient boosting",
+      "XGBoost",
+      "sequential trees"
+    ],
+    "speakingKeywords": [
+      "sequential trees",
+      "correct residual errors",
+      "combined prediction"
+    ],
+    "thinking": "Explain the training mechanism as a general method, then return to the actual study setup.",
+    "answer": "XGBoost is an optimized gradient-boosted tree system. In gradient boosting, trees are added sequentially so each new tree improves the current ensemble's objective. XGBoost combines their outputs for a final score. In our study, we used this tree ensemble for tabular daily weather predictors; we did not analyze individual tree updates.",
+    "source": "General method: XGBoost documentation; study settings: paper p. 3",
+    "evidence": "General AI concept + paper setup",
+    "followUps": [
+      "ai_gradient_hessian",
+      "ai_learning_rate"
+    ]
+  },
+  {
+    "id": "ai_additive",
+    "category": "AI technical · XGBoost",
+    "question": "Why is XGBoost called an additive tree model?",
+    "variants": [
+      "How are the trees combined at prediction time?",
+      "Does one tree make the whole forecast?"
+    ],
+    "keywords": [
+      "additive",
+      "trees",
+      "ensemble",
+      "prediction"
+    ],
+    "speakingKeywords": [
+      "sum of tree contributions",
+      "ensemble",
+      "not one tree"
+    ],
+    "thinking": "Describe the model form without implying you inspected individual trees in this experiment.",
+    "answer": "The prediction is built by adding contributions from many trees rather than relying on one tree. The learning rate scales each new tree's contribution. Our selected model used 300 trees, but the paper reports aggregate model behavior rather than a tree-by-tree analysis.",
+    "source": "General method: XGBoost documentation; paper p. 3",
+    "evidence": "General AI concept + paper setup",
+    "followUps": [
+      "ai_boosting",
+      "hyperparam_values"
+    ]
+  },
+  {
+    "id": "ai_gradient_hessian",
+    "category": "AI technical · XGBoost",
+    "question": "What are gradients and Hessians in XGBoost training?",
+    "variants": [
+      "Why does XGBoost use second-order information?",
+      "What does a tree optimize at each boosting step?"
+    ],
+    "keywords": [
+      "gradient",
+      "Hessian",
+      "second order",
+      "objective"
+    ],
+    "speakingKeywords": [
+      "first derivative",
+      "second derivative",
+      "optimize split and leaf values"
+    ],
+    "thinking": "Give the standard mathematical role; do not invent the exact objective used in this paper.",
+    "answer": "In XGBoost's standard tree boosting, gradients describe how the loss changes with the current prediction, and Hessians describe local curvature. They help choose splits and leaf scores that improve the objective. The paper does not report a derivation or the exact loss configuration used in the code.",
+    "source": "General method: Chen and Guestrin (2016), paper reference [1]",
+    "evidence": "General AI concept; exact loss not reported",
+    "followUps": [
+      "ai_training_objective",
+      "ai_gain_split"
+    ]
+  },
+  {
+    "id": "ai_training_objective",
+    "category": "AI technical · XGBoost",
+    "question": "What training objective did the XGBoost classifier use?",
+    "variants": [
+      "Was binary logistic loss explicitly configured?",
+      "Is F1 the loss optimized by each tree?"
+    ],
+    "keywords": [
+      "objective",
+      "binary logistic",
+      "F1",
+      "training loss"
+    ],
+    "speakingKeywords": [
+      "F1 used for grid-search selection",
+      "tree loss not specified",
+      "do not assume"
+    ],
+    "thinking": "Separate the model's internal optimization objective from GridSearchCV's model-selection metric.",
+    "answer": "The paper says GridSearchCV selected hyperparameters using F1, but it does not explicitly state the XGBoost training objective. F1 was therefore the selection score, not something I can claim each tree directly optimized. Binary logistic is common for this task, but I cannot verify that exact setting from the paper.",
+    "source": "Paper p. 3; XGBoost documentation for general objectives",
+    "evidence": "Exact study configuration not reported",
+    "followUps": [
+      "grid_search",
+      "ai_f1_nondifferentiable"
+    ]
+  },
+  {
+    "id": "ai_f1_nondifferentiable",
+    "category": "AI technical · XGBoost",
+    "question": "Why does grid search optimize F1 while XGBoost trains with another loss?",
+    "variants": [
+      "Can XGBoost directly differentiate F1?",
+      "What is the difference between training loss and validation metric?"
+    ],
+    "keywords": [
+      "F1",
+      "differentiable",
+      "loss",
+      "grid search"
+    ],
+    "speakingKeywords": [
+      "tree training loss",
+      "validation F1",
+      "threshold-based selection"
+    ],
+    "thinking": "Explain the two optimization levels, then limit claims about the paper's unreported inner loss.",
+    "answer": "Tree boosting needs an objective suitable for its optimization procedure, while grid search can compare trained models using an external metric such as F1. F1 depends on thresholded counts and is not the usual smooth tree-training objective. In this paper, F1 was explicitly the grid-search selection score; the internal loss was not specified.",
+    "source": "Paper p. 3; general method: XGBoost and scikit-learn documentation",
+    "evidence": "General AI concept + reported selection metric",
+    "followUps": [
+      "ai_training_objective",
+      "f1_choice"
+    ]
+  },
+  {
+    "id": "ai_gain_split",
+    "category": "AI technical · XGBoost",
+    "question": "What does a high gain value mean for a tree feature?",
+    "variants": [
+      "How is split gain related to loss reduction?",
+      "Does high gain prove a causal weather effect?"
+    ],
+    "keywords": [
+      "gain",
+      "split",
+      "loss reduction",
+      "causal"
+    ],
+    "speakingKeywords": [
+      "split improvement",
+      "training model",
+      "not causal"
+    ],
+    "thinking": "Define gain within the fitted trees; reject causal interpretation.",
+    "answer": "A high gain means splits using that feature tended to improve the model's training objective more under the chosen importance definition. It is about the fitted tree ensemble, not a causal estimate of the weather process. Correlated predictors can also share or shift gain.",
+    "source": "XGBoost documentation; paper pp. 3–4",
+    "evidence": "General AI concept + paper ranking",
+    "followUps": [
+      "gain_definition",
+      "correlated_features"
+    ]
+  },
+  {
+    "id": "ai_importance_types",
+    "category": "AI technical · XGBoost",
+    "question": "How is gain importance different from weight or cover?",
+    "variants": [
+      "Why choose gain rather than split count?",
+      "What are XGBoost importance types?"
+    ],
+    "keywords": [
+      "gain",
+      "weight",
+      "cover",
+      "feature importance"
+    ],
+    "speakingKeywords": [
+      "gain: average split improvement",
+      "weight: split frequency",
+      "cover: affected samples"
+    ],
+    "thinking": "Use the official definitions and say which one this paper used.",
+    "answer": "XGBoost offers several importance summaries. Gain averages the improvement from splits using a feature; weight counts how often it is used; cover summarizes how many observations those splits affect. This paper used mean gain per split, so a different importance type could produce a different ranking.",
+    "source": "XGBoost Python API documentation; paper p. 3",
+    "evidence": "General AI concept + reported choice",
+    "followUps": [
+      "gain_definition",
+      "gain_ranking"
+    ]
+  },
+  {
+    "id": "ai_depth",
+    "category": "AI technical · XGBoost",
+    "question": "What does max_depth = 3 control?",
+    "variants": [
+      "Why use shallow trees?",
+      "How can tree depth affect overfitting?"
+    ],
+    "keywords": [
+      "max depth",
+      "depth 3",
+      "overfitting",
+      "complexity"
+    ],
+    "speakingKeywords": [
+      "maximum path depth",
+      "interaction complexity",
+      "selected by search"
+    ],
+    "thinking": "Explain the capacity trade-off without claiming depth 3 was scientifically optimal.",
+    "answer": "Maximum depth limits how deep an individual tree can grow. Depth 3 permits some interactions while restricting tree complexity relative to deeper trees. It was selected by the reported grid search; we did not isolate its effect in a separate ablation.",
+    "source": "XGBoost parameter documentation; paper p. 3",
+    "evidence": "General AI concept + paper setting",
+    "followUps": [
+      "grid_search",
+      "ai_overfit"
+    ]
+  },
+  {
+    "id": "ai_learning_rate",
+    "category": "AI technical · XGBoost",
+    "question": "Why combine learning_rate = 0.01 with 300 trees?",
+    "variants": [
+      "What does eta do in XGBoost?",
+      "Why can a small learning rate need more estimators?"
+    ],
+    "keywords": [
+      "learning rate",
+      "eta",
+      "300 trees",
+      "estimators"
+    ],
+    "speakingKeywords": [
+      "shrink each tree",
+      "more boosting steps",
+      "selected combination"
+    ],
+    "thinking": "Explain the usual trade-off and avoid implying the paper compared learning curves.",
+    "answer": "The learning rate shrinks each added tree's contribution. A smaller value often needs more trees to build a useful ensemble. The selected combination was 0.01 and 300 trees, but the paper does not present learning curves showing that this pair is uniquely optimal.",
+    "source": "XGBoost parameter documentation; paper p. 3",
+    "evidence": "General AI concept + paper setting",
+    "followUps": [
+      "ai_additive",
+      "hyperparam_values"
+    ]
+  },
+  {
+    "id": "ai_subsample",
+    "category": "AI technical · XGBoost",
+    "question": "What does subsample = 0.8 do?",
+    "variants": [
+      "Does every tree see every training row?",
+      "Why sample rows during boosting?"
+    ],
+    "keywords": [
+      "subsample",
+      "0.8",
+      "rows",
+      "overfitting"
+    ],
+    "speakingKeywords": [
+      "80% row sample per tree",
+      "stochastic training",
+      "regularization trade-off"
+    ],
+    "thinking": "Give the parameter meaning, not a measured claim about this model's variance.",
+    "answer": "Subsample = 0.8 means each tree is built using a sampled 80% of the training rows. Row sampling can reduce overfitting, but the paper does not quantify that effect separately. The value came from the shared tuned configuration.",
+    "source": "XGBoost parameter documentation; paper p. 3",
+    "evidence": "General AI concept + paper setting",
+    "followUps": [
+      "ai_colsample",
+      "ai_overfit"
+    ]
+  },
+  {
+    "id": "ai_colsample",
+    "category": "AI technical · XGBoost",
+    "question": "What does colsample_bytree = 0.8 do?",
+    "variants": [
+      "Does each tree use every predictor?",
+      "Why sample columns in XGBoost?"
+    ],
+    "keywords": [
+      "colsample_bytree",
+      "0.8",
+      "columns",
+      "features"
+    ],
+    "speakingKeywords": [
+      "80% columns per tree",
+      "feature diversity",
+      "shared setting"
+    ],
+    "thinking": "State the documented parameter behavior and its reported value.",
+    "answer": "It samples 80% of the predictor columns when building each tree. This can diversify trees and limit reliance on any one set of features. We kept it at 0.8 for baseline, Path A, and Path B so the feature-set comparison used the same training settings.",
+    "source": "XGBoost parameter documentation; paper p. 3",
+    "evidence": "General AI concept + paper setting",
+    "followUps": [
+      "ai_subsample",
+      "fixed_hyperparams"
+    ]
+  },
+  {
+    "id": "ai_overfit",
+    "category": "AI technical · XGBoost",
+    "question": "How did you check that XGBoost was not overfitting?",
+    "variants": [
+      "Do the train and test scores show overfitting?",
+      "Was there an overfitting diagnostic?"
+    ],
+    "keywords": [
+      "overfitting",
+      "train score",
+      "test score",
+      "diagnostic"
+    ],
+    "speakingKeywords": [
+      "chronological hold-out",
+      "16-fold CV",
+      "no train-test gap reported"
+    ],
+    "thinking": "Say what checks exist and what diagnostic was not reported.",
+    "answer": "We evaluated on a later hold-out period and with time-series CV, which checks performance beyond training. However, the paper does not report training-versus-validation learning curves or a direct overfitting gap. I would not claim overfitting was ruled out completely.",
+    "source": "Paper pp. 3–6",
+    "evidence": "Study checks reported; direct diagnostic absent",
+    "followUps": [
+      "cv",
+      "ai_early_stopping"
+    ]
+  },
+  {
+    "id": "ai_early_stopping",
+    "category": "AI technical · XGBoost",
+    "question": "Did you use early stopping?",
+    "variants": [
+      "Why use 300 trees without early stopping?",
+      "Was n_estimators selected by validation?"
+    ],
+    "keywords": [
+      "early stopping",
+      "300 trees",
+      "n_estimators",
+      "validation"
+    ],
+    "speakingKeywords": [
+      "not reported",
+      "300 selected by grid search",
+      "no learning curve"
+    ],
+    "thinking": "Do not infer an unreported training procedure.",
+    "answer": "Early stopping is not reported in the paper. The number of trees, 300, was part of the selected grid-search configuration. If we extend the work, early stopping should be evaluated inside each training fold without exposing the final test period.",
+    "source": "Paper p. 3; early stopping not reported",
+    "evidence": "Study detail not reported",
+    "followUps": [
+      "grid_search",
+      "ai_overfit"
+    ]
+  },
+  {
+    "id": "ai_xgb_missing",
+    "category": "AI technical · XGBoost",
+    "question": "Why impute missing predictors if XGBoost can handle missing values?",
+    "variants": [
+      "Does XGBoost require mean imputation?",
+      "Could native missing-value handling be a better baseline?"
+    ],
+    "keywords": [
+      "XGBoost",
+      "missing values",
+      "imputation",
+      "native handling"
+    ],
+    "speakingKeywords": [
+      "XGBoost supports missing paths",
+      "paper chose imputation",
+      "not compared"
+    ],
+    "thinking": "Distinguish a framework capability from the pipeline actually tested.",
+    "answer": "XGBoost can learn default directions for missing values, so simple imputation is not inherently required by the model. This study chose training-only mean, median, and mode imputation and did not compare it with XGBoost's native missing-value handling. That comparison is a valid future sensitivity test.",
+    "source": "XGBoost documentation; paper p. 2",
+    "evidence": "General AI capability + paper pipeline",
+    "followUps": [
+      "imputation_details",
+      "imputation_bias"
+    ]
+  },
+  {
+    "id": "ai_tree_probability",
+    "category": "AI technical · XGBoost",
+    "question": "How does a tree ensemble produce a rain probability?",
+    "variants": [
+      "Is 0.491 a direct weather measurement?",
+      "How should XGBoost's predicted probability be read?"
+    ],
+    "keywords": [
+      "probability",
+      "XGBoost",
+      "tree score",
+      "0.491"
+    ],
+    "speakingKeywords": [
+      "model output",
+      "thresholded class",
+      "calibration not tested"
+    ],
+    "thinking": "Distinguish model output from observed rainfall and from a calibrated risk estimate.",
+    "answer": "The classifier combines tree outputs into a model score reported as rain probability. In the December case that score was 0.491, below the usual 0.5 class cutoff. It is a prediction, not a weather measurement, and the paper did not verify probability calibration.",
+    "source": "General classifier concept; paper pp. 3, 5",
+    "evidence": "General AI concept + paper example",
+    "followUps": [
+      "probability_cutoff",
+      "calibration"
+    ]
+  },
+  {
+    "id": "ai_lime_acronym",
+    "category": "AI technical · LIME",
+    "question": "What does LIME stand for?",
+    "variants": [
+      "What is LIME in plain language?",
+      "Is LIME itself the rain predictor?",
+      "What is LIME?"
+    ],
+    "keywords": [
+      "LIME",
+      "local interpretable",
+      "model agnostic"
+    ],
+    "speakingKeywords": [
+      "Local Interpretable Model-agnostic Explanations",
+      "post-hoc explainer",
+      "XGBoost predicts"
+    ],
+    "thinking": "Define the acronym and separate explainer from predictor.",
+    "answer": "LIME means Local Interpretable Model-agnostic Explanations. It approximates one model prediction nearby with a simpler interpretable model. In our study, XGBoost makes the rain prediction; LIME explains selected XGBoost predictions and guides feature refinement.",
+    "source": "Ribeiro et al. (2016), paper reference [3]; paper pp. 1, 3",
+    "evidence": "General AI concept + paper use",
+    "followUps": [
+      "ai_lime_steps",
+      "why_lime"
+    ]
+  },
+  {
+    "id": "ai_lime_steps",
+    "category": "AI technical · LIME",
+    "question": "What are the main steps of a LIME explanation?",
+    "variants": [
+      "How does LIME generate a local explanation?",
+      "What happens between perturbing an instance and showing weights?"
+    ],
+    "keywords": [
+      "LIME steps",
+      "perturb",
+      "predict",
+      "surrogate",
+      "weights"
+    ],
+    "speakingKeywords": [
+      "sample neighbors",
+      "query XGBoost",
+      "weight by proximity",
+      "fit simple surrogate"
+    ],
+    "thinking": "Explain the algorithm in sequence, and avoid claiming the paper measured surrogate fidelity.",
+    "answer": "LIME perturbs an instance to create nearby samples, asks the trained XGBoost model for predictions on them, gives nearby samples more weight, and fits a simple local surrogate. The surrogate's feature weights become the local explanation. Our paper used 5,000 perturbations per explanation.",
+    "source": "Ribeiro et al. (2016); paper p. 3",
+    "evidence": "General AI concept + paper setting",
+    "followUps": [
+      "ai_lime_kernel",
+      "ai_lime_surrogate"
+    ]
+  },
+  {
+    "id": "ai_lime_surrogate",
+    "category": "AI technical · LIME",
+    "question": "Is LIME's local surrogate the same as XGBoost?",
+    "variants": [
+      "What model is fitted inside LIME?",
+      "Does the explanation reproduce every tree?"
+    ],
+    "keywords": [
+      "surrogate",
+      "local model",
+      "XGBoost",
+      "linear"
+    ],
+    "speakingKeywords": [
+      "simple local approximation",
+      "not original tree ensemble",
+      "local fidelity matters"
+    ],
+    "thinking": "Stress approximation, then name the missing fidelity assessment.",
+    "answer": "No. LIME fits a simpler interpretable model around one prediction to approximate XGBoost locally; it does not expose or reproduce every tree. The quality of that approximation matters, and this paper did not report separate local-surrogate fidelity scores.",
+    "source": "Ribeiro et al. (2016); paper pp. 3–5",
+    "evidence": "General AI concept; fidelity not reported",
+    "followUps": [
+      "lime_fidelity",
+      "ai_lime_steps"
+    ]
+  },
+  {
+    "id": "ai_lime_kernel",
+    "category": "AI technical · LIME",
+    "question": "Why does LIME weight nearby perturbations more heavily?",
+    "variants": [
+      "What is the locality kernel for?",
+      "Would distant samples explain the same prediction?"
+    ],
+    "keywords": [
+      "kernel",
+      "proximity",
+      "locality",
+      "perturbations"
+    ],
+    "speakingKeywords": [
+      "focus near instance",
+      "local approximation",
+      "kernel width not reported"
+    ],
+    "thinking": "Explain locality in general, and avoid inventing a kernel-width setting.",
+    "answer": "The goal is to explain one prediction, so perturbations closer to that instance should matter more when fitting the surrogate. Faraway samples could describe a different part of XGBoost's decision surface. The paper does not report a separate kernel-width sensitivity analysis.",
+    "source": "Ribeiro et al. (2016); paper p. 3",
+    "evidence": "General AI concept; sensitivity not tested",
+    "followUps": [
+      "ai_lime_steps",
+      "lime_fidelity"
+    ]
+  },
+  {
+    "id": "ai_lime_modelagnostic",
+    "category": "AI technical · LIME",
+    "question": "What does model-agnostic mean for LIME?",
+    "variants": [
+      "Does LIME need access to XGBoost internals?",
+      "Could LIME explain a different classifier?"
+    ],
+    "keywords": [
+      "model agnostic",
+      "LIME",
+      "black box",
+      "classifier"
+    ],
+    "speakingKeywords": [
+      "queries input-output behavior",
+      "no tree structure required",
+      "not proof of accuracy"
+    ],
+    "thinking": "Define what information LIME needs and what that does not guarantee.",
+    "answer": "Model-agnostic means LIME can explain a model by querying its predictions for perturbed inputs, without relying on the model's internal tree structure. That makes it applicable beyond XGBoost. It does not mean every local approximation is equally faithful, which is why fidelity and stability matter.",
+    "source": "Ribeiro et al. (2016), paper reference [3]",
+    "evidence": "General AI concept",
+    "followUps": [
+      "ai_lime_steps",
+      "lime_fidelity"
+    ]
+  },
+  {
+    "id": "ai_lime_perturbation",
+    "category": "AI technical · LIME",
+    "question": "Can LIME perturbations create unrealistic weather combinations?",
+    "variants": [
+      "What is a risk of tabular perturbation?",
+      "Could LIME sample physically impossible feature values?"
+    ],
+    "keywords": [
+      "perturbation",
+      "unrealistic",
+      "weather",
+      "correlation"
+    ],
+    "speakingKeywords": [
+      "feature dependence",
+      "out-of-distribution samples",
+      "not checked here"
+    ],
+    "thinking": "Identify a plausible limitation of the method, but do not say it was measured in this study.",
+    "answer": "Yes, tabular perturbations can weaken natural dependencies between weather variables, especially derived or correlated features. A surrogate fitted on unrealistic combinations may explain behavior outside the data distribution. This study did not quantify that risk; it is a reason to treat LIME weights as diagnostics rather than physical causes.",
+    "source": "General LIME limitation; paper pp. 3–4 (correlated features)",
+    "evidence": "General method limitation; not measured here",
+    "followUps": [
+      "correlated_features",
+      "lime_fidelity"
+    ]
+  },
+  {
+    "id": "ai_lime_bins",
+    "category": "AI technical · LIME",
+    "question": "Why did LIME discretize continuous features into quartiles?",
+    "variants": [
+      "What does quartile discretization do?",
+      "Does LIME treat 79% humidity as a learned physical law?"
+    ],
+    "keywords": [
+      "quartile",
+      "discretization",
+      "continuous",
+      "LIME"
+    ],
+    "speakingKeywords": [
+      "four data-based bins",
+      "readable conditions",
+      "not physical threshold"
+    ],
+    "thinking": "Explain the interpretation benefit and the artificial-bin limitation.",
+    "answer": "Quartile discretization turns a continuous variable into four data-based ranges, so a local explanation can say which range pushes toward rain. It helps readability but creates step boundaries. The paper's 73% and 79% humidity cutoffs are those bins, not physical thresholds.",
+    "source": "Paper pp. 3–4; LIME tabular configuration",
+    "evidence": "Paper-backed method and interpretation",
+    "followUps": [
+      "quartile_thresholds",
+      "ai_lime_weight_sign"
+    ]
+  },
+  {
+    "id": "ai_lime_weight_sign",
+    "category": "AI technical · LIME",
+    "question": "What does a positive or negative LIME weight mean?",
+    "variants": [
+      "Does a negative weight mean no rain?",
+      "How do I read the orange and blue bars?"
+    ],
+    "keywords": [
+      "positive weight",
+      "negative weight",
+      "LIME",
+      "rain class"
+    ],
+    "speakingKeywords": [
+      "positive pushes rain class",
+      "negative pushes no rain",
+      "local surrogate"
+    ],
+    "thinking": "Define direction relative to the explained class, not as a causal weather law.",
+    "answer": "For the rain class in the paper's plots, a positive local LIME weight pushes the surrogate toward rain and a negative weight pushes it away from rain. The sign describes this model's local prediction behavior. It is not a causal effect of changing that weather variable in reality.",
+    "source": "Paper pp. 3, 5 · Figs. 4 and 9",
+    "evidence": "Paper-backed interpretation",
+    "followUps": [
+      "local_explanation",
+      "ai_lime_surrogate"
+    ]
+  },
+  {
+    "id": "ai_lime_abs",
+    "category": "AI technical · LIME",
+    "question": "Why aggregate absolute LIME weights instead of signed weights?",
+    "variants": [
+      "Would positive and negative weights cancel globally?",
+      "What does mean absolute LIME weight measure?"
+    ],
+    "keywords": [
+      "absolute",
+      "signed",
+      "LIME weight",
+      "aggregate"
+    ],
+    "speakingKeywords": [
+      "avoid cancellation",
+      "magnitude of local influence",
+      "direction lost"
+    ],
+    "thinking": "Explain both the reason for absolute values and the information they discard.",
+    "answer": "Signed local weights can cancel when a feature pushes rain up in some cases and down in others. Averaging absolute weights measures how prominently the feature appears across cases. The cost is that the global ranking loses direction, so the paper also inspects local and humidity-bin patterns.",
+    "source": "Paper p. 3 (aggregation method); general interpretation",
+    "evidence": "Paper-backed method + general reasoning",
+    "followUps": [
+      "lime_aggregate",
+      "rh_monotonic"
+    ]
+  },
+  {
+    "id": "ai_lime_samples",
+    "category": "AI technical · LIME",
+    "question": "Why use 5,000 LIME perturbation samples?",
+    "variants": [
+      "Would more LIME samples improve stability?",
+      "Was 5,000 optimized?"
+    ],
+    "keywords": [
+      "5000",
+      "perturbation samples",
+      "stability",
+      "LIME"
+    ],
+    "speakingKeywords": [
+      "reported setting",
+      "sampling-cost trade-off",
+      "not tuned"
+    ],
+    "thinking": "Do not invent a sample-size study; link the fixed setting to the observed seed stability.",
+    "answer": "The paper fixed 5,000 perturbations per local explanation and then checked ranking stability across ten random seeds. It did not compare different sample counts, so we cannot call 5,000 optimal. More samples may reduce sampling noise but also increase explanation cost.",
+    "source": "Paper pp. 3, 5",
+    "evidence": "Paper setting; trade-off is general",
+    "followUps": [
+      "lime_stability",
+      "runtime_cost"
+    ]
+  },
+  {
+    "id": "ai_lime_seed",
+    "category": "AI technical · LIME",
+    "question": "Why does LIME depend on a random seed?",
+    "variants": [
+      "Why can the same instance get slightly different LIME weights?",
+      "What did repeating seeds test?"
+    ],
+    "keywords": [
+      "seed",
+      "random",
+      "sampling",
+      "LIME"
+    ],
+    "speakingKeywords": [
+      "random perturbations",
+      "weight variability",
+      "10-seed stability"
+    ],
+    "thinking": "Connect algorithmic randomness to the paper's repeated-seed check.",
+    "answer": "LIME samples perturbed neighbors, so different random seeds can produce slightly different surrogate fits and weights. We repeated aggregate explanations across ten seeds. The overall ranking was stable, but one pruning decision near 2% was not stable across every run.",
+    "source": "Paper pp. 3, 5 · Table VI",
+    "evidence": "Paper-backed method and result",
+    "followUps": [
+      "lime_stability",
+      "wind_borderline"
+    ]
+  },
+  {
+    "id": "ai_lime_vs_shap",
+    "category": "AI technical · LIME",
+    "question": "How does LIME conceptually differ from TreeSHAP?",
+    "variants": [
+      "Is LIME the same as SHAP?",
+      "Why not treat LIME and SHAP weights as identical?"
+    ],
+    "keywords": [
+      "LIME",
+      "TreeSHAP",
+      "difference",
+      "attribution"
+    ],
+    "speakingKeywords": [
+      "local surrogate sampling",
+      "Shapley-based tree attribution",
+      "different definitions"
+    ],
+    "thinking": "Give a high-level distinction only; keep the separate SHAP experiment outside this paper's core claims.",
+    "answer": "LIME fits a simple local surrogate from perturbed inputs and model outputs. TreeSHAP computes Shapley-style attributions specialized for tree models. Their weights have different definitions, so a numerical ranking difference does not by itself identify which explanation is physically correct. The TreeSHAP results are in a separate companion study.",
+    "source": "Ribeiro et al. (2016); paper p. 1 and reference to companion",
+    "evidence": "General method distinction + study scope",
+    "followUps": [
+      "shap",
+      "lime_weight_meaning"
+    ]
+  },
+  {
+    "id": "ai_precision_formula",
+    "category": "AI technical · metrics",
+    "question": "What is precision in this rain classifier?",
+    "variants": [
+      "How is precision calculated from the confusion matrix?",
+      "What does a false alarm do to precision?"
+    ],
+    "keywords": [
+      "precision",
+      "true positive",
+      "false positive",
+      "formula"
+    ],
+    "speakingKeywords": [
+      "TP/(TP+FP)",
+      "59/(59+14)",
+      "0.8082"
+    ],
+    "thinking": "Use the actual confusion matrix so the formula is concrete.",
+    "answer": "Precision is the share of predicted-rain days that really were rainy: TP divided by TP plus FP. For the baseline, that is 59 divided by 59 plus 14, or 0.8082. A false rain alarm lowers precision.",
+    "source": "Paper p. 3 · baseline confusion matrix",
+    "evidence": "Paper-backed calculation",
+    "followUps": [
+      "baseline_errors",
+      "ai_recall_formula"
+    ]
+  },
+  {
+    "id": "ai_recall_formula",
+    "category": "AI technical · metrics",
+    "question": "What is recall in this rain classifier?",
+    "variants": [
+      "How is recall calculated from the confusion matrix?",
+      "What does a missed rainy day do to recall?"
+    ],
+    "keywords": [
+      "recall",
+      "true positive",
+      "false negative",
+      "formula"
+    ],
+    "speakingKeywords": [
+      "TP/(TP+FN)",
+      "59/(59+13)",
+      "0.8194"
+    ],
+    "thinking": "Use the actual rainy-day denominator, not all test days.",
+    "answer": "Recall is the share of actually rainy days that the model catches: TP divided by TP plus FN. For the baseline, that is 59 divided by 59 plus 13, or 0.8194. A missed rainy day lowers recall.",
+    "source": "Paper p. 3 · baseline confusion matrix",
+    "evidence": "Paper-backed calculation",
+    "followUps": [
+      "baseline_errors",
+      "ai_precision_formula"
+    ]
+  },
+  {
+    "id": "ai_f1_formula",
+    "category": "AI technical · metrics",
+    "question": "How is F1 calculated from precision and recall?",
+    "variants": [
+      "Why is F1 a harmonic mean?",
+      "Can I derive baseline F1 from the confusion matrix?",
+      "What is F1?"
+    ],
+    "keywords": [
+      "F1",
+      "harmonic mean",
+      "precision",
+      "recall",
+      "formula"
+    ],
+    "speakingKeywords": [
+      "2PR/(P+R)",
+      "2TP/(2TP+FP+FN)",
+      "0.8138"
+    ],
+    "thinking": "Show the formula and connect it to the baseline result without overexplaining calculus.",
+    "answer": "F1 is 2 times precision times recall divided by their sum. From the confusion matrix it is also 2TP divided by 2TP plus FP plus FN. With TP 59, FP 14, and FN 13, the baseline F1 is 118/145, or 0.8138.",
+    "source": "Paper p. 3 · baseline confusion matrix",
+    "evidence": "Paper-backed calculation",
+    "followUps": [
+      "ai_precision_formula",
+      "ai_recall_formula"
+    ]
+  },
+  {
+    "id": "ai_aucpr_roc",
+    "category": "AI technical · metrics",
+    "question": "What is the difference between AUC-PR and AUC-ROC?",
+    "variants": [
+      "Why report both ranking metrics?",
+      "Why might their model rankings differ?",
+      "What is AUC?"
+    ],
+    "keywords": [
+      "AUC-PR",
+      "AUC-ROC",
+      "precision recall",
+      "ROC"
+    ],
+    "speakingKeywords": [
+      "PR: precision versus recall",
+      "ROC: TPR versus FPR",
+      "threshold sweep"
+    ],
+    "thinking": "Define the axes and mention that neither is the fixed-threshold F1 score.",
+    "answer": "AUC-PR summarizes precision against recall across decision thresholds, emphasizing the rain class. AUC-ROC summarizes true-positive rate against false-positive rate across thresholds. They assess ranking behavior rather than one chosen class cutoff, so their model rankings can differ from F1.",
+    "source": "Paper pp. 3–4 (reported metrics); standard metric definitions",
+    "evidence": "General metric concept + paper results",
+    "followUps": [
+      "auc_metrics",
+      "f1_choice"
+    ]
+  },
+  {
+    "id": "ai_threshold_vs_auc",
+    "category": "AI technical · metrics",
+    "question": "Why can F1 improve while AUC-ROC falls slightly?",
+    "variants": [
+      "How can Path A win F1 but not AUC?",
+      "Are threshold metrics and ranking metrics contradictory?"
+    ],
+    "keywords": [
+      "F1",
+      "AUC-ROC",
+      "threshold",
+      "ranking"
+    ],
+    "speakingKeywords": [
+      "F1 at one cutoff",
+      "AUC across cutoffs",
+      "small differences"
+    ],
+    "thinking": "Show that the metrics answer different questions, then cite the observed pattern.",
+    "answer": "F1 evaluates the predicted classes at a particular cutoff, while AUC-ROC summarizes score ranking across many cutoffs. Path A had the highest hold-out F1, but its AUC-ROC was 0.8779 versus 0.8796 for baseline. That is not a contradiction; the small differences also do not establish superiority.",
+    "source": "Paper p. 4 · Table IV",
+    "evidence": "Paper-backed metric comparison",
+    "followUps": [
+      "auc_metrics",
+      "probability_cutoff"
+    ]
+  },
+  {
+    "id": "ai_mcnemar_table",
+    "category": "AI technical · evaluation",
+    "question": "What do b and c mean in McNemar's test?",
+    "variants": [
+      "How are discordant pairs counted?",
+      "Why not compare only total correct predictions?",
+      "What is McNemar test?"
+    ],
+    "keywords": [
+      "McNemar",
+      "b",
+      "c",
+      "discordant",
+      "paired"
+    ],
+    "speakingKeywords": [
+      "b: only first correct",
+      "c: only second correct",
+      "paired same days"
+    ],
+    "thinking": "Define the paired contingency table before citing its p-value.",
+    "answer": "Here b counts days only the first model got correct, and c counts days only the second got correct. McNemar's test uses that asymmetry, not just the two overall accuracies. For baseline versus Path A on the hold-out set, b was 1 and c was 3.",
+    "source": "Paper p. 5 · Table V",
+    "evidence": "Paper-backed test design",
+    "followUps": [
+      "mcnemar",
+      "significance"
+    ]
+  },
+  {
+    "id": "ai_holm_steps",
+    "category": "AI technical · evaluation",
+    "question": "How does Holm correction control multiple tests?",
+    "variants": [
+      "What is the purpose of Holm adjustment?",
+      "Why adjust three pairwise p-values?"
+    ],
+    "keywords": [
+      "Holm",
+      "multiple testing",
+      "p-values",
+      "family wise"
+    ],
+    "speakingKeywords": [
+      "sort p-values",
+      "stepwise adjustment",
+      "family-wise error"
+    ],
+    "thinking": "Explain the logic in plain language, not a false claim that adjusted p is the probability of no effect.",
+    "answer": "When several pairs are tested, some small p-values can occur by chance. Holm's stepwise method compares the ordered p-values against progressively less strict thresholds to control the family-wise false-positive rate. The paper adjusted three pairwise comparisons; none became significant.",
+    "source": "Paper p. 3 and reference [19]; Table V",
+    "evidence": "General statistical method + paper use",
+    "followUps": [
+      "holm",
+      "significance"
+    ]
+  },
+  {
+    "id": "ai_timeseries_split",
+    "category": "AI technical · evaluation",
+    "question": "Why is a random train-test split risky for daily weather data?",
+    "variants": [
+      "Why use TimeSeriesSplit instead of ordinary K-fold?",
+      "What does chronological validation protect against?"
+    ],
+    "keywords": [
+      "random split",
+      "TimeSeriesSplit",
+      "future data",
+      "chronological"
+    ],
+    "speakingKeywords": [
+      "train on past",
+      "test on future",
+      "avoid temporal leakage"
+    ],
+    "thinking": "Explain the time direction; then acknowledge that other pipeline steps still need nesting.",
+    "answer": "Random splitting can put future weather observations in training while testing on earlier days. Chronological splitting makes each test period later than its training period. This paper used a chronological hold-out and expanding-window CV, although tuning and feature selection were not fully nested within each CV fold.",
+    "source": "Paper pp. 2–3, 6; scikit-learn TimeSeriesSplit documentation",
+    "evidence": "General validation principle + paper design",
+    "followUps": [
+      "split",
+      "nested_selection"
+    ]
+  },
+  {
+    "id": "ai_nested_cv",
+    "category": "AI technical · evaluation",
+    "question": "What is nested cross-validation and why would it matter here?",
+    "variants": [
+      "What is the inner versus outer validation loop?",
+      "Why is tuning on future CV test windows a concern?"
+    ],
+    "keywords": [
+      "nested CV",
+      "inner loop",
+      "outer loop",
+      "tuning",
+      "selection bias"
+    ],
+    "speakingKeywords": [
+      "inner: tune and select",
+      "outer: estimate performance",
+      "not fully done here"
+    ],
+    "thinking": "Describe the proper separation and admit the study's limitation.",
+    "answer": "A nested design uses inner training folds to tune settings and select features, while an outer fold stays untouched for performance estimation. In this paper, the selected hyperparameters and feature sets used information from periods later reused as CV test windows. That can make absolute CV scores optimistic, so a nested rerun would be stronger.",
+    "source": "Paper p. 6; scikit-learn model-selection documentation",
+    "evidence": "General evaluation concept + stated paper limit",
+    "followUps": [
+      "nested_selection",
+      "leakage"
+    ]
+  },
+  {
+    "id": "ai_cv_mean_vs_pooled",
+    "category": "AI technical · evaluation",
+    "question": "Why can pooled F1 differ from the average fold F1?",
+    "variants": [
+      "Is F1 additive across folds?",
+      "Which CV aggregation weighs large folds more?"
+    ],
+    "keywords": [
+      "pooled F1",
+      "mean fold F1",
+      "nonlinear",
+      "aggregation"
+    ],
+    "speakingKeywords": [
+      "F1 nonlinear",
+      "pool counts first",
+      "mean folds separately"
+    ],
+    "thinking": "Explain aggregation mathematically without suggesting either value is an error.",
+    "answer": "F1 is a nonlinear function of TP, FP, and FN. Pooled F1 adds the counts across folds before computing the ratio, while mean fold F1 computes a ratio for each fold and averages those ratios. Different fold sizes and class mixes therefore produce different summaries, as they did here.",
+    "source": "Paper p. 5; standard F1 definition",
+    "evidence": "General metric reasoning + paper figures",
+    "followUps": [
+      "pooled_vs_mean",
+      "ai_f1_formula"
+    ]
+  },
+  {
+    "id": "ai_bagging_boosting",
+    "category": "AI technical · XGBoost",
+    "question": "How is boosting different from bagging?",
+    "variants": [
+      "Is XGBoost like a random forest?",
+      "Do all XGBoost trees learn in parallel?"
+    ],
+    "keywords": [
+      "boosting",
+      "bagging",
+      "random forest",
+      "sequential"
+    ],
+    "speakingKeywords": [
+      "boosting: sequential correction",
+      "bagging: parallel resampling",
+      "XGBoost uses boosting"
+    ],
+    "thinking": "Explain the conceptual difference without claiming the paper compared these algorithms.",
+    "answer": "Boosting adds trees sequentially to improve the current ensemble. Bagging trains models on resampled data more independently and combines them, as in a random forest. Our study used XGBoost; it did not compare XGBoost against a bagged model.",
+    "source": "General ensemble-learning concept; paper p. 3",
+    "evidence": "General AI concept; comparison not tested",
+    "followUps": [
+      "ai_boosting",
+      "simple_baseline"
+    ]
+  },
+  {
+    "id": "ai_permutation_importance",
+    "category": "AI technical · XGBoost",
+    "question": "Why not compare LIME with permutation importance?",
+    "variants": [
+      "Could a model-agnostic importance baseline be stronger?",
+      "Was permutation importance tested?"
+    ],
+    "keywords": [
+      "permutation importance",
+      "LIME",
+      "gain",
+      "baseline"
+    ],
+    "speakingKeywords": [
+      "not tested",
+      "gain is built in",
+      "additional comparator useful"
+    ],
+    "thinking": "Answer the scope choice, then welcome a stronger future comparator.",
+    "answer": "Permutation importance was not tested. We chose XGBoost's built-in gain because it is a readily available comparator for the same fitted model. A permutation-based baseline would add another useful perspective, especially because importance methods can disagree on correlated features.",
+    "source": "Paper pp. 2–3; comparison not reported",
+    "evidence": "Study scope; method not tested",
+    "followUps": [
+      "lime_vs_gain",
+      "correlated_features"
+    ]
+  },
+  {
+    "id": "ai_error_costs",
+    "category": "AI technical · metrics",
+    "question": "Should false negatives and false positives have equal cost?",
+    "variants": [
+      "Is missing rain worse than a false alarm?",
+      "Why not optimize a cost-sensitive objective?"
+    ],
+    "keywords": [
+      "false negative",
+      "false positive",
+      "cost sensitive",
+      "decision"
+    ],
+    "speakingKeywords": [
+      "cost depends on use case",
+      "paper reports both error types",
+      "not optimized"
+    ],
+    "thinking": "Separate statistical scores from a stakeholder's real decision costs.",
+    "answer": "The cost depends on the decision. A missed rainy day may be costly for some outdoor work, while a false alarm may be costly for another operation. This paper reports both error types but does not estimate stakeholder costs or tune a cost-sensitive threshold, so it cannot recommend one universal trade-off.",
+    "source": "Paper pp. 1, 3; cost analysis not reported",
+    "evidence": "Paper error counts; costs not measured",
+    "followUps": [
+      "baseline_errors",
+      "probability_cutoff"
+    ]
+  }
+]

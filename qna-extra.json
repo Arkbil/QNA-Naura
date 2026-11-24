@@ -1,0 +1,1920 @@
+[
+  {
+    "id": "hypothesis",
+    "category": "Research design",
+    "question": "What hypothesis did this study test?",
+    "variants": [
+      "Did you expect LIME to improve XGBoost?",
+      "What was the central hypothesis?"
+    ],
+    "keywords": [
+      "hypothesis",
+      "LIME",
+      "accuracy",
+      "gain importance"
+    ],
+    "speakingKeywords": [
+      "LIME-guided refinement",
+      "gain comparator",
+      "test, not assume"
+    ],
+    "thinking": "State the proposed advantage, then explain that the experiment did not confirm an accuracy advantage.",
+    "answer": "We tested whether LIME-guided refinement would improve one-day-ahead rain classification beyond refinement based on XGBoost's gain importance. The hold-out F1 was numerically higher for LIME, but the paired tests and cross-validation did not support a reliable accuracy advantage.",
+    "source": "Paper pp. 1, 5–6",
+    "followUps": [
+      "significance",
+      "ablation"
+    ]
+  },
+  {
+    "id": "research_questions",
+    "category": "Research design",
+    "question": "What were the main research questions?",
+    "variants": [
+      "What exactly did you set out to answer?",
+      "What are the study objectives?"
+    ],
+    "keywords": [
+      "research questions",
+      "objectives",
+      "baseline",
+      "LIME",
+      "comparison"
+    ],
+    "speakingKeywords": [
+      "baseline performance",
+      "LIME interpretation",
+      "Path A versus B",
+      "compactness and stability"
+    ],
+    "thinking": "Group the four questions into prediction, interpretation, comparison, and robustness.",
+    "answer": "We asked how well baseline XGBoost predicts next-day rain, what LIME says about the features, whether LIME-guided refinement differs from gain-guided refinement, and whether the resulting model is compact and the LIME ranking stable.",
+    "source": "Paper pp. 1–2",
+    "followUps": [
+      "contribution",
+      "hypothesis"
+    ]
+  },
+  {
+    "id": "not_accuracy_paper",
+    "category": "Research design",
+    "question": "Is this primarily a forecasting-accuracy paper or an XAI evaluation?",
+    "variants": [
+      "What is the emphasis of your study?",
+      "Are you trying to beat the best forecast model?"
+    ],
+    "keywords": [
+      "focus",
+      "forecasting",
+      "accuracy",
+      "xai",
+      "evaluation"
+    ],
+    "speakingKeywords": [
+      "controlled refinement",
+      "interpretability",
+      "modest model comparison"
+    ],
+    "thinking": "Clarify the study scope before comparing it with a broad forecasting benchmark.",
+    "answer": "The emphasis is on testing LIME as a feedback mechanism for feature refinement, with XGBoost as a common predictor. We report forecasting quality, but we did not benchmark every possible model or claim state-of-the-art weather forecasting.",
+    "source": "Paper pp. 1–3",
+    "followUps": [
+      "contribution",
+      "why_xgboost"
+    ]
+  },
+  {
+    "id": "falsification",
+    "category": "Research design",
+    "question": "What result would have contradicted your expectation?",
+    "variants": [
+      "What evidence would make you reject the LIME advantage?",
+      "How did you avoid assuming LIME must help?"
+    ],
+    "keywords": [
+      "falsify",
+      "contradict",
+      "expectation",
+      "LIME advantage"
+    ],
+    "speakingKeywords": [
+      "Path B comparator",
+      "paired testing",
+      "ablation"
+    ],
+    "thinking": "Treat the negative result as useful evidence, not a failure to hide.",
+    "answer": "If Path A did not consistently outperform Path B and the gain disappeared in ablation, we could not attribute an accuracy advantage to LIME. That is what the results showed. The paper therefore limits its claim to diagnostic value and model parsimony.",
+    "source": "Paper pp. 5–6",
+    "followUps": [
+      "ablation",
+      "significance"
+    ]
+  },
+  {
+    "id": "operational_scope",
+    "category": "Research design",
+    "question": "What practical decision could the forecast support?",
+    "variants": [
+      "Who could use the prediction?",
+      "What is the use case for H plus one rain?"
+    ],
+    "keywords": [
+      "operational",
+      "decision",
+      "farmers",
+      "logistics",
+      "forecast"
+    ],
+    "speakingKeywords": [
+      "daily planning",
+      "spraying or harvest",
+      "cargo protection"
+    ],
+    "thinking": "Give a concrete use case, then avoid presenting the model as an official warning system.",
+    "answer": "A next-day rain flag can support daily planning, such as scheduling field work or protecting moisture-sensitive cargo. It is decision support for that horizon, not a replacement for official BMKG forecasts.",
+    "source": "Paper pp. 1–2",
+    "followUps": [
+      "official_forecast",
+      "why_binary"
+    ]
+  },
+  {
+    "id": "data_provenance",
+    "category": "Data and target",
+    "question": "Why did you use a Kaggle copy of BMKG data?",
+    "variants": [
+      "Is the dataset an official BMKG download?",
+      "How trustworthy is the data source?"
+    ],
+    "keywords": [
+      "Kaggle",
+      "BMKG",
+      "provenance",
+      "source"
+    ],
+    "speakingKeywords": [
+      "BMKG observations",
+      "curated Kaggle repository",
+      "provenance limitation"
+    ],
+    "thinking": "Distinguish the originating observer from the distribution channel; avoid claiming direct BMKG access.",
+    "answer": "The underlying observations are BMKG daily fields from station 96783, but we accessed them through a curated Kaggle repository. That provenance should be kept explicit. Direct verification against an official BMKG export would strengthen a future replication.",
+    "source": "Paper p. 2, reference [13]",
+    "followUps": [
+      "dataset",
+      "single_station"
+    ]
+  },
+  {
+    "id": "missing_pattern",
+    "category": "Data and target",
+    "question": "Was missing rainfall distributed evenly across the years?",
+    "variants": [
+      "Which years had the largest RR gaps?",
+      "Could missingness bias the sample?"
+    ],
+    "keywords": [
+      "missing",
+      "RR",
+      "2014",
+      "2015",
+      "bias"
+    ],
+    "speakingKeywords": [
+      "17.06% RR missing",
+      "2014 40.29%",
+      "2015 39.01%"
+    ],
+    "thinking": "State the uneven pattern and its implication for representativeness.",
+    "answer": "No. RR was missing in 17.06% of the raw records, with particularly high missingness in 2014 and 2015: 40.29% and 39.01%. Removing those rows can change the observed seasonal and yearly mix, so it is a limitation of the dataset.",
+    "source": "Paper p. 2",
+    "followUps": [
+      "missing_rr",
+      "horizon_misalignment"
+    ]
+  },
+  {
+    "id": "row_counts",
+    "category": "Data and target",
+    "question": "Why do the row counts change from 3,910 to 3,236?",
+    "variants": [
+      "Where did the seven rows after RR cleaning go?",
+      "Explain each dataset-size figure."
+    ],
+    "keywords": [
+      "3910",
+      "3243",
+      "3236",
+      "rows",
+      "counts"
+    ],
+    "speakingKeywords": [
+      "3,910 raw",
+      "3,243 after RR removal",
+      "3,236 after feature construction"
+    ],
+    "thinking": "Give the sequence without inventing a more detailed cause for every dropped row.",
+    "answer": "The raw station series had 3,910 rows. After removing rows with missing RR, 3,243 remained. Lag, rolling, and next-row target construction left 3,236 usable rows. The paper does not break down every one of those seven further exclusions separately.",
+    "source": "Paper p. 2 · Backup slide 20",
+    "followUps": [
+      "missing_rr",
+      "dataset"
+    ]
+  },
+  {
+    "id": "rain_prevalence",
+    "category": "Data and target",
+    "question": "Was the rain class strongly imbalanced?",
+    "variants": [
+      "What fraction of days were rainy?",
+      "Did class imbalance matter?"
+    ],
+    "keywords": [
+      "imbalance",
+      "rain",
+      "59.9",
+      "40.1"
+    ],
+    "speakingKeywords": [
+      "59.9% rainy",
+      "40.1% dry",
+      "mild imbalance"
+    ],
+    "thinking": "Use the actual proportions and describe the imbalance as mild.",
+    "answer": "In the cleaned data, 59.9% of days met the rain definition and 40.1% were dry. That is a mild imbalance. It motivated reporting F1 and AUC-PR alongside accuracy, rather than treating overall accuracy as sufficient.",
+    "source": "Paper p. 3 · Slide 5",
+    "followUps": [
+      "f1_choice",
+      "threshold_rain"
+    ]
+  },
+  {
+    "id": "seasonality",
+    "category": "Data and target",
+    "question": "What seasonal pattern did the data show?",
+    "variants": [
+      "Does Bandung rainfall follow the monsoon?",
+      "Which months were wettest and driest?"
+    ],
+    "keywords": [
+      "seasonality",
+      "monsoon",
+      "monthly rainfall",
+      "november",
+      "august"
+    ],
+    "speakingKeywords": [
+      "November peak 14.2 mm",
+      "August low 2.0 mm",
+      "monsoonal cycle"
+    ],
+    "thinking": "Give the pattern and figures, then connect it to why calendar features may help.",
+    "answer": "Average daily rainfall was higher from November through April and lower around June through August. November peaked at 14.2 mm and August was about 2.0 mm. This seasonal structure gives day-of-year features a plausible signal, though it does not make a particular encoding automatically optimal.",
+    "source": "Paper p. 3",
+    "followUps": [
+      "cyclic",
+      "holdout_small"
+    ]
+  },
+  {
+    "id": "imputation_details",
+    "category": "Preprocessing integrity",
+    "question": "How were missing weather predictors imputed?",
+    "variants": [
+      "Which variables used mean, median, or mode imputation?",
+      "Were imputation values learned from training data only?"
+    ],
+    "keywords": [
+      "imputation",
+      "mean",
+      "median",
+      "mode",
+      "training"
+    ],
+    "speakingKeywords": [
+      "temperature mean",
+      "RH and wind median",
+      "wind direction mode",
+      "train only"
+    ],
+    "thinking": "List the imputation rule by variable group, and mention the training-only safeguard.",
+    "answer": "Temperature fields used the training mean; relative humidity, sunshine, and numeric wind fields used training medians; categorical wind direction used the training mode. We avoided interpolation because it could use observations from later days.",
+    "source": "Paper p. 2",
+    "followUps": [
+      "missing_rr",
+      "leakage"
+    ]
+  },
+  {
+    "id": "imputation_bias",
+    "category": "Preprocessing integrity",
+    "question": "Could simple imputation distort meteorological relationships?",
+    "variants": [
+      "Is mean imputation scientifically ideal?",
+      "What is the downside of median imputation?"
+    ],
+    "keywords": [
+      "imputation",
+      "bias",
+      "meteorology",
+      "mean",
+      "median"
+    ],
+    "speakingKeywords": [
+      "simple baseline",
+      "distribution distortion",
+      "sensitivity analysis needed"
+    ],
+    "thinking": "Acknowledge the compromise; avoid claiming imputation has no effect.",
+    "answer": "Yes. Mean and median imputation are simple and avoid using future values, but they can flatten variability and weaken relationships. We did not quantify that effect here. A future analysis should compare causal alternatives and report sensitivity to the imputation choice.",
+    "source": "Paper pp. 2, 6",
+    "followUps": [
+      "imputation_details",
+      "missing_pattern"
+    ]
+  },
+  {
+    "id": "lag_construction",
+    "category": "Preprocessing integrity",
+    "question": "Did lag and rolling features use future observations?",
+    "variants": [
+      "How did you prevent leakage in rolling means?",
+      "Are rolling features causal?"
+    ],
+    "keywords": [
+      "lag",
+      "rolling",
+      "future",
+      "leakage",
+      "causal"
+    ],
+    "speakingKeywords": [
+      "current and earlier rows",
+      "no future values",
+      "calendar gap remains"
+    ],
+    "thinking": "Separate temporal direction from calendar alignment.",
+    "answer": "The lag and rolling features used the current and earlier observed rows only, so they did not look forward in time. Because missing-RR rows were removed first, some 'previous row' lags were not from the previous calendar day. That is misalignment, not future leakage.",
+    "source": "Paper pp. 2, 5",
+    "followUps": [
+      "horizon_misalignment",
+      "leakage"
+    ]
+  },
+  {
+    "id": "exact_day_subset",
+    "category": "Preprocessing integrity",
+    "question": "What happened when you evaluated only exact next-day targets?",
+    "variants": [
+      "Did the calendar-gap sensitivity analysis change the conclusion?",
+      "How many hold-out samples were exact next day?"
+    ],
+    "keywords": [
+      "exact next day",
+      "calendar",
+      "sensitivity",
+      "99",
+      "1828"
+    ],
+    "speakingKeywords": [
+      "hold-out n=99",
+      "CV n=1,828",
+      "no significant pairwise difference"
+    ],
+    "thinking": "Give subset size and conclusion; avoid comparing subset F1 directly with full-set F1 as if they were the same cases.",
+    "answer": "Restricting evaluation to exact next-calendar-day targets left 99 hold-out cases and 1,828 cross-validation predictions. The three hold-out F1 scores were 0.857, 0.864, and 0.867 for baseline, Path A, and Path B. Pairwise differences still were not significant.",
+    "source": "Paper p. 5",
+    "followUps": [
+      "horizon_misalignment",
+      "significance"
+    ]
+  },
+  {
+    "id": "previous_day_subset",
+    "category": "Preprocessing integrity",
+    "question": "What if both the target and lag-one day must align exactly?",
+    "variants": [
+      "Did you test strict calendar alignment?",
+      "What happens when the previous day is also required?"
+    ],
+    "keywords": [
+      "previous day",
+      "lag one",
+      "strict alignment",
+      "78",
+      "1553"
+    ],
+    "speakingKeywords": [
+      "hold-out n=78",
+      "CV n=1,553",
+      "still non-significant"
+    ],
+    "thinking": "Describe it as sensitivity analysis of unchanged models, not a retrained pipeline.",
+    "answer": "On the stricter subset requiring both an exact next-day target and a previous-calendar-day lag-one value, 78 hold-out cases and 1,553 CV predictions remained. F1 varied across the models, but no pairwise difference became significant. The models were not retrained for this subset.",
+    "source": "Paper p. 5",
+    "followUps": [
+      "exact_day_subset",
+      "horizon_misalignment"
+    ]
+  },
+  {
+    "id": "grid_search",
+    "category": "Model and training",
+    "question": "How did you tune XGBoost?",
+    "variants": [
+      "What grid-search procedure did you use?",
+      "How many hyperparameter combinations were tried?"
+    ],
+    "keywords": [
+      "grid search",
+      "hyperparameters",
+      "54",
+      "time series split"
+    ],
+    "speakingKeywords": [
+      "54 combinations",
+      "5-fold TimeSeriesSplit",
+      "F1 objective"
+    ],
+    "thinking": "State search design, then mention that CV estimates are not fully nested around tuning.",
+    "answer": "We used GridSearchCV with a five-fold TimeSeriesSplit and F1 as the scoring objective, testing 54 combinations. We selected learning rate 0.01, depth 3, 300 trees, subsample 0.8, and column subsample 0.8, then held those settings fixed across models.",
+    "source": "Paper p. 3 · Backup slide 19",
+    "followUps": [
+      "fixed_hyperparams",
+      "leakage"
+    ]
+  },
+  {
+    "id": "fixed_hyperparams",
+    "category": "Model and training",
+    "question": "Why keep hyperparameters fixed after feature refinement?",
+    "variants": [
+      "Could Path A perform better if retuned?",
+      "Was it fair not to retune each feature set?"
+    ],
+    "keywords": [
+      "fixed",
+      "hyperparameters",
+      "retune",
+      "features",
+      "fair"
+    ],
+    "speakingKeywords": [
+      "attribute differences to features",
+      "same settings",
+      "possible under-optimization"
+    ],
+    "thinking": "Explain the control benefit and the possible cost to smaller feature sets.",
+    "answer": "Holding settings fixed makes the feature-set comparison easier to interpret. It also means a smaller refined set might be slightly under-optimized. We acknowledge that trade-off; retuning inside each training fold would be useful in a future, fully nested evaluation.",
+    "source": "Paper pp. 3, 6",
+    "followUps": [
+      "grid_search",
+      "unequal_paths"
+    ]
+  },
+  {
+    "id": "hyperparam_values",
+    "category": "Model and training",
+    "question": "What XGBoost settings were selected?",
+    "variants": [
+      "What were the final tuned hyperparameters?",
+      "How many trees and what maximum depth?"
+    ],
+    "keywords": [
+      "learning rate",
+      "max depth",
+      "300 trees",
+      "subsample",
+      "colsample"
+    ],
+    "speakingKeywords": [
+      "300 trees",
+      "depth 3",
+      "learning rate 0.01",
+      "subsample 0.8"
+    ],
+    "thinking": "Give only settings asked for; avoid pretending each setting's causal role was tested.",
+    "answer": "The selected configuration used 300 trees, maximum depth 3, learning rate 0.01, subsample 0.8, and column subsample 0.8. We used it for baseline, Path A, and Path B.",
+    "source": "Paper p. 3 · Backup slide 19",
+    "followUps": [
+      "grid_search",
+      "fixed_hyperparams"
+    ]
+  },
+  {
+    "id": "probability_cutoff",
+    "category": "Model and training",
+    "question": "Was the 0.5 probability decision cutoff optimized?",
+    "variants": [
+      "Why classify 0.491 as no rain?",
+      "Could another probability threshold improve F1?"
+    ],
+    "keywords": [
+      "probability threshold",
+      "0.5",
+      "0.491",
+      "cutoff",
+      "F1"
+    ],
+    "speakingKeywords": [
+      "default 0.5 decision",
+      "not tuned",
+      "threshold sensitivity"
+    ],
+    "thinking": "Separate the rain-definition threshold in millimeters from the probability decision threshold.",
+    "answer": "The 0.5-mm threshold defines the observed rain label; a predicted rain probability around 0.5 determines the model's class. The paper does not report optimizing the probability cutoff. A different cutoff might change precision and recall, so that would need a separate validation step.",
+    "source": "Paper pp. 2–3, 5",
+    "followUps": [
+      "threshold_rain",
+      "case"
+    ]
+  },
+  {
+    "id": "calibration",
+    "category": "Model and training",
+    "question": "Are the predicted probabilities calibrated?",
+    "variants": [
+      "Can 0.8 output be interpreted as an 80% rain chance?",
+      "Did you test probability calibration?"
+    ],
+    "keywords": [
+      "calibration",
+      "probability",
+      "reliability",
+      "80 percent"
+    ],
+    "speakingKeywords": [
+      "not evaluated",
+      "ranking metrics",
+      "calibration curve future"
+    ],
+    "thinking": "Do not interpret a model score as a calibrated probability without evidence.",
+    "answer": "We did not evaluate calibration, so I would not interpret an XGBoost score of 0.8 as a verified 80% rain probability. AUC metrics assess ranking, and F1 assesses a class threshold. Reliability diagrams or calibration methods would be needed before using probabilities directly in decisions.",
+    "source": "Paper pp. 3–4 (metrics reported; calibration not reported)",
+    "followUps": [
+      "probability_cutoff",
+      "operational_scope"
+    ]
+  },
+  {
+    "id": "simple_baseline",
+    "category": "Model and training",
+    "question": "Why did you not compare against a persistence or climatology baseline?",
+    "variants": [
+      "Is XGBoost better than a simple seasonal rule?",
+      "Where is the naive forecasting benchmark?"
+    ],
+    "keywords": [
+      "persistence",
+      "climatology",
+      "naive baseline",
+      "simple rule"
+    ],
+    "speakingKeywords": [
+      "not included",
+      "scope is refinement comparison",
+      "needed for operational value"
+    ],
+    "thinking": "Accept the missing benchmark; distinguish it from the Path B methodological comparator.",
+    "answer": "That benchmark is absent from this paper. Our controlled comparison asks whether LIME adds value beyond gain-based feature refinement within XGBoost, not whether XGBoost beats persistence or climatology. A simple forecasting baseline should be included before making an operational superiority claim.",
+    "source": "Paper pp. 1–3, 6",
+    "followUps": [
+      "why_xgboost",
+      "operational_scope"
+    ]
+  },
+  {
+    "id": "class_weights",
+    "category": "Model and training",
+    "question": "Did you use class weights or resampling?",
+    "variants": [
+      "How did you address class imbalance during training?",
+      "Was SMOTE applied?"
+    ],
+    "keywords": [
+      "class weights",
+      "resampling",
+      "SMOTE",
+      "imbalance"
+    ],
+    "speakingKeywords": [
+      "not reported",
+      "mild imbalance",
+      "F1 evaluation"
+    ],
+    "thinking": "Do not invent training procedures that are not in the paper.",
+    "answer": "The paper does not report class weighting or resampling such as SMOTE. The class distribution was only mildly imbalanced, at about 60% rain and 40% dry, and we used F1 and AUC-PR to evaluate the rain class. Whether weighting helps would need a separate experiment.",
+    "source": "Paper pp. 2–3",
+    "followUps": [
+      "rain_prevalence",
+      "f1_choice"
+    ]
+  },
+  {
+    "id": "feature_22",
+    "category": "Features and physics",
+    "question": "What were the 22 baseline predictors?",
+    "variants": [
+      "What input features did XGBoost use?",
+      "Did you include rainfall lags and calendar variables?"
+    ],
+    "keywords": [
+      "22 predictors",
+      "baseline features",
+      "lags",
+      "rolling",
+      "calendar"
+    ],
+    "speakingKeywords": [
+      "nine daily numeric fields",
+      "rain and RH lags",
+      "rolling means",
+      "calendar",
+      "wind code"
+    ],
+    "thinking": "Group predictors by type instead of listing twenty-two names from memory.",
+    "answer": "The baseline used nine numeric daily weather fields, RR and relative-humidity lags one to three, three- and seven-day rolling means of RR and humidity, month and day of year, and an encoded wind-direction category. That totals 22 predictors.",
+    "source": "Paper pp. 2–3 · Table II",
+    "followUps": [
+      "feature_path_a",
+      "feature_path_b"
+    ]
+  },
+  {
+    "id": "feature_path_a",
+    "category": "Features and physics",
+    "question": "Which features remained in Path A?",
+    "variants": [
+      "What are the thirteen LIME-guided features?",
+      "What did Path A prune and add?"
+    ],
+    "keywords": [
+      "Path A",
+      "13 features",
+      "LIME pruning",
+      "dew point"
+    ],
+    "speakingKeywords": [
+      "eight retained baseline features",
+      "two cyclic terms",
+      "three physics features"
+    ],
+    "thinking": "Give the feature groups and count; refer to Table II if the full list is requested.",
+    "answer": "Path A retained eight baseline predictors: Tn, Tavg, RH_avg, RR, sunshine, average wind speed, wind-direction code, three-day mean humidity, and then replaced raw day of year with sine and cosine. It added dew point, temperature–dew point spread, and a humidity–sunshine interaction, for thirteen features in total.",
+    "source": "Paper p. 3 · Table II",
+    "followUps": [
+      "why_two_percent",
+      "dewpoint"
+    ]
+  },
+  {
+    "id": "feature_path_b",
+    "category": "Features and physics",
+    "question": "Which features did Path B use?",
+    "variants": [
+      "What did gain-guided refinement remove?",
+      "How was Path B built?"
+    ],
+    "keywords": [
+      "Path B",
+      "15 features",
+      "gain importance",
+      "RH trend"
+    ],
+    "speakingKeywords": [
+      "eight low-gain features removed",
+      "RH_avg trend added",
+      "15 total"
+    ],
+    "thinking": "State the rule and resulting size; avoid reciting an error-prone full list unless needed.",
+    "answer": "Path B removed eight baseline predictors below the 2% gain-importance share: three humidity lags, RR lags two and three, seven-day RR mean, maximum temperature, and maximum wind speed. It added RH_avg trend, leaving fifteen predictors.",
+    "source": "Paper p. 3 · Table II",
+    "followUps": [
+      "rh_trend",
+      "unequal_paths"
+    ]
+  },
+  {
+    "id": "rh_trend",
+    "category": "Features and physics",
+    "question": "What does RH_avg trend represent?",
+    "variants": [
+      "Why was humidity trend added to Path B?",
+      "How is the RH trend feature calculated?"
+    ],
+    "keywords": [
+      "RH_avg trend",
+      "humidity trend",
+      "three-day mean",
+      "Path B"
+    ],
+    "speakingKeywords": [
+      "current RH minus three-day mean",
+      "top-gain source features"
+    ],
+    "thinking": "Explain the formula and why it belongs to the gain-guided path.",
+    "answer": "RH_avg trend is today's relative humidity minus its three-day rolling mean. It describes whether current humidity is above or below the recent level. Path B derives it from two high-gain baseline features, without using the LIME ranking.",
+    "source": "Paper p. 3",
+    "followUps": [
+      "feature_path_b",
+      "humidity"
+    ]
+  },
+  {
+    "id": "sun_deficit",
+    "category": "Features and physics",
+    "question": "What is the RH times sunshine-deficit feature?",
+    "variants": [
+      "Why use RH_avg divided by sunshine plus one?",
+      "Is RH_x_sun_deficit physically validated?"
+    ],
+    "keywords": [
+      "RH_x_sun_deficit",
+      "sunshine",
+      "humidity",
+      "interaction"
+    ],
+    "speakingKeywords": [
+      "RH_avg/(ss+1)",
+      "heuristic interaction",
+      "zero-safe offset"
+    ],
+    "thinking": "Call it a heuristic, not a measured atmospheric variable or established law.",
+    "answer": "It is RH_avg divided by sunshine hours plus one. The feature combines humid air with low sunshine, and the plus-one avoids division by zero on a day with zero sunshine. It is a heuristic interaction; this study does not establish it as a physical law or an independent measurement.",
+    "source": "Paper p. 3",
+    "followUps": [
+      "feature_path_a",
+      "dewpoint"
+    ]
+  },
+  {
+    "id": "wind_encoding",
+    "category": "Features and physics",
+    "question": "How was wind direction represented?",
+    "variants": [
+      "Why encode categorical wind direction numerically?",
+      "Could wind direction coding impose a false order?"
+    ],
+    "keywords": [
+      "wind direction",
+      "ddd_car_code",
+      "encoding",
+      "ordinal"
+    ],
+    "speakingKeywords": [
+      "numeric category code",
+      "possible ordering artifact",
+      "borderline ddd_x"
+    ],
+    "thinking": "State what was done and identify a plausible modeling limitation without claiming it was tested.",
+    "answer": "The baseline included a numeric code for categorical wind direction and a separate numeric direction field. A numeric category code can imply ordering that may not reflect circular wind direction. We did not run a dedicated wind-encoding ablation, so a cyclic or one-hot treatment deserves future testing.",
+    "source": "Paper pp. 2–3 (encoding described)",
+    "followUps": [
+      "feature_22",
+      "why_two_percent"
+    ]
+  },
+  {
+    "id": "lime_perturbations",
+    "category": "LIME interpretation",
+    "question": "How was LIME configured?",
+    "variants": [
+      "How many perturbation samples did LIME use?",
+      "How many features appear in each local explanation?"
+    ],
+    "keywords": [
+      "LIME",
+      "perturbations",
+      "5000",
+      "top ten",
+      "quartile"
+    ],
+    "speakingKeywords": [
+      "5,000 samples",
+      "quartile discretization",
+      "10 reported features"
+    ],
+    "thinking": "Report configuration separately from any claim that it is optimal.",
+    "answer": "We used a tabular LIME explainer with quartile discretization, 5,000 perturbation samples, and ten features shown per local explanation. The aggregate ranking then averaged absolute weights over all 129 hold-out instances.",
+    "source": "Paper p. 3",
+    "followUps": [
+      "lime_aggregate",
+      "lime_stability"
+    ]
+  },
+  {
+    "id": "lime_top_ten",
+    "category": "LIME interpretation",
+    "question": "Does a zero aggregate LIME weight mean a feature has no effect?",
+    "variants": [
+      "What does it mean when LIME omits a feature?",
+      "Could the top-ten setting bias pruning?"
+    ],
+    "keywords": [
+      "zero weight",
+      "top ten",
+      "LIME omission",
+      "pruning"
+    ],
+    "speakingKeywords": [
+      "only top ten reported",
+      "zero when absent",
+      "not zero physical effect"
+    ],
+    "thinking": "Explain the truncation mechanism before interpreting low weights.",
+    "answer": "No. Each explanation reports only ten features, and an absent feature receives zero for aggregation. A low aggregate share means it was rarely among the locally dominant ten, not that its true influence is exactly zero. This matters when interpreting the 2% pruning rule.",
+    "source": "Paper p. 3",
+    "followUps": [
+      "lime_aggregate",
+      "why_two_percent"
+    ]
+  },
+  {
+    "id": "lime_weight_meaning",
+    "category": "LIME interpretation",
+    "question": "What does the 42.5% LIME weight for RH_avg mean?",
+    "variants": [
+      "Is 42.5% a causal share of rainfall?",
+      "How should aggregate LIME percentages be interpreted?"
+    ],
+    "keywords": [
+      "42.5%",
+      "LIME weight",
+      "causal",
+      "RH_avg"
+    ],
+    "speakingKeywords": [
+      "share of absolute explanation weights",
+      "not causal contribution",
+      "model-specific"
+    ],
+    "thinking": "Do not translate attribution share into real-world causal importance.",
+    "answer": "It means RH_avg accounted for 42.5% of the summed aggregate absolute LIME weights under this setup. It is a model-explanation share, not a claim that humidity causes 42.5% of rain or that this share transfers to other stations.",
+    "source": "Paper pp. 3–4",
+    "followUps": [
+      "humidity",
+      "lime_aggregate"
+    ]
+  },
+  {
+    "id": "correlated_features",
+    "category": "LIME interpretation",
+    "question": "How do correlated features affect LIME attribution?",
+    "variants": [
+      "Can LIME split importance between redundant humidity features?",
+      "Why can T–Td spread rank above RH?"
+    ],
+    "keywords": [
+      "correlated",
+      "redundant",
+      "LIME",
+      "humidity",
+      "T Td spread"
+    ],
+    "speakingKeywords": [
+      "deterministic derived features",
+      "r = -0.997",
+      "attribution can shift"
+    ],
+    "thinking": "Use the actual correlation to show that attribution is not independent information.",
+    "answer": "Correlated or derived variables can share and shift attribution. In Path A, temperature–dew point spread is calculated from temperature and humidity and has training correlation r = -0.997 with RH_avg. Its top LIME rank largely restates the humidity signal rather than revealing a new independent cause.",
+    "source": "Paper p. 4",
+    "followUps": [
+      "dewpoint",
+      "lime_weight_meaning"
+    ]
+  },
+  {
+    "id": "physics_check",
+    "category": "LIME interpretation",
+    "question": "Does agreement with meteorology validate LIME?",
+    "variants": [
+      "Is the humidity explanation physically proven?",
+      "How did you check LIME against domain theory?"
+    ],
+    "keywords": [
+      "meteorology",
+      "validate",
+      "physical",
+      "LIME",
+      "humidity"
+    ],
+    "speakingKeywords": [
+      "consistent with theory",
+      "not a causal validation",
+      "correlation limited"
+    ],
+    "thinking": "Separate plausibility from proof; cite both positive evidence and its limit.",
+    "answer": "The humidity and seasonality patterns are consistent with established meteorological expectations. We also checked marginal correlations for top features. But neither theory agreement nor correlation validates individual LIME attributions causally; it is a plausibility check.",
+    "source": "Paper pp. 3–4",
+    "followUps": [
+      "humidity",
+      "lime_weight_meaning"
+    ]
+  },
+  {
+    "id": "quartile_thresholds",
+    "category": "LIME interpretation",
+    "question": "Are the 73% and 79% humidity cutoffs physical thresholds?",
+    "variants": [
+      "What do the RH_avg quartiles mean?",
+      "Can we use 79% RH as an operational rain rule?"
+    ],
+    "keywords": [
+      "73%",
+      "79%",
+      "quartile",
+      "humidity",
+      "threshold"
+    ],
+    "speakingKeywords": [
+      "LIME discretization bins",
+      "not physical thresholds",
+      "not operational rules"
+    ],
+    "thinking": "Block a tempting but unsupported operational interpretation.",
+    "answer": "No. Those boundaries come from LIME's quartile discretization. In this model's local explanations, higher RH bins tend to push toward rain, but 73% and 79% are not universal physical or operational thresholds.",
+    "source": "Paper pp. 3–4",
+    "followUps": [
+      "humidity",
+      "lime_perturbations"
+    ]
+  },
+  {
+    "id": "gain_definition",
+    "category": "Path A and Path B",
+    "question": "What does XGBoost gain importance measure?",
+    "variants": [
+      "How is Path B's feature importance defined?",
+      "Is gain the same as LIME weight?"
+    ],
+    "keywords": [
+      "gain importance",
+      "XGBoost",
+      "split",
+      "LIME"
+    ],
+    "speakingKeywords": [
+      "mean gain per split",
+      "model-internal",
+      "different attribution scale"
+    ],
+    "thinking": "Define both measures before comparing their rankings.",
+    "answer": "The paper uses XGBoost's mean gain per split: the average improvement in the training objective when a feature is used for a tree split. LIME instead approximates local prediction behavior around instances. Their values and rankings answer different questions, so we normalize shares only for comparison.",
+    "source": "Paper pp. 3–4",
+    "followUps": [
+      "lime_vs_gain",
+      "gain_ranking"
+    ]
+  },
+  {
+    "id": "gain_ranking",
+    "category": "Path A and Path B",
+    "question": "Which features did gain importance rank highest?",
+    "variants": [
+      "How did gain and LIME rankings differ?",
+      "Was RH_avg first in both rankings?"
+    ],
+    "keywords": [
+      "gain ranking",
+      "RH_avg_roll3",
+      "RH_avg",
+      "LIME"
+    ],
+    "speakingKeywords": [
+      "RH_avg_roll3 first 21.6%",
+      "RH_avg second 21.3%",
+      "LIME RH_avg first"
+    ],
+    "thinking": "Use the top two and the key contrast; avoid treating either ranking as ground truth.",
+    "answer": "Gain ranked the three-day mean humidity first at 21.6% of summed mean gain and current RH_avg second at 21.3%. LIME ranked current RH_avg first and day of year second. Both point to humidity, but they distribute importance differently, especially across correlated features.",
+    "source": "Paper p. 4",
+    "followUps": [
+      "gain_definition",
+      "correlated_features"
+    ]
+  },
+  {
+    "id": "path_a_compactness",
+    "category": "Path A and Path B",
+    "question": "How much smaller was the LIME-guided model?",
+    "variants": [
+      "What is the feature-count reduction in Path A?",
+      "Did compactness cost accuracy?"
+    ],
+    "keywords": [
+      "compactness",
+      "13 features",
+      "22 features",
+      "accuracy"
+    ],
+    "speakingKeywords": [
+      "22 to 13",
+      "nine fewer features",
+      "comparable accuracy"
+    ],
+    "thinking": "Quantify compactness, then avoid claiming proven equivalence.",
+    "answer": "Path A used thirteen predictors instead of twenty-two, nine fewer. Its hold-out F1 was numerically higher, while cross-validated mean F1 was essentially unchanged. The tests found no detectable loss or gain, but they do not prove strict equivalence.",
+    "source": "Paper pp. 4–6",
+    "followUps": [
+      "ablation",
+      "equivalence"
+    ]
+  },
+  {
+    "id": "ten_feature_variant",
+    "category": "Robustness and ablation",
+    "question": "What happened when redundant raw variables were removed from Path A?",
+    "variants": [
+      "Did you test a ten-feature Path A model?",
+      "Could derived features replace RH_avg and Tavg?"
+    ],
+    "keywords": [
+      "ten features",
+      "raw variables",
+      "Tavg",
+      "RH_avg",
+      "sunshine"
+    ],
+    "speakingKeywords": [
+      "remove Tavg, RH_avg, ss",
+      "hold-out F1 unchanged",
+      "CV mean 0.831"
+    ],
+    "thinking": "Describe this as an additional ablation, not proof that raw variables are useless everywhere.",
+    "answer": "Removing raw Tavg, RH_avg, and sunshine from Path A left ten features. Hold-out F1 stayed at 0.8276 and mean CV F1 was 0.831; the reported comparison was not significant. This suggests redundancy in this setup, not that those measurements are universally unnecessary.",
+    "source": "Paper p. 4",
+    "followUps": [
+      "correlated_features",
+      "ablation"
+    ]
+  },
+  {
+    "id": "pruning_nine",
+    "category": "Robustness and ablation",
+    "question": "Can LIME pruning alone produce a small model?",
+    "variants": [
+      "What did the nine-feature pruning-only model show?",
+      "Is LIME useful without new engineered features?"
+    ],
+    "keywords": [
+      "nine features",
+      "pruning only",
+      "LIME",
+      "ablation"
+    ],
+    "speakingKeywords": [
+      "22 to 9",
+      "hold-out F1 0.8138",
+      "CV pooled 0.841"
+    ],
+    "thinking": "Focus on parsimony and keep the numerical accuracy difference in context.",
+    "answer": "Yes. The pruning-only ablation reduced the baseline from twenty-two to nine predictors while hold-out F1 remained 0.8138, matching the baseline. Pooled CV F1 was 0.841 versus 0.843 for baseline, with no detectable difference. This is the clearest evidence for parsimony.",
+    "source": "Paper p. 5 · Table VII",
+    "followUps": [
+      "ablation",
+      "path_a_compactness"
+    ]
+  },
+  {
+    "id": "auc_metrics",
+    "category": "Metrics and statistics",
+    "question": "Which model had the best AUC-PR and AUC-ROC?",
+    "variants": [
+      "Did Path A win on every metric?",
+      "How did probability-ranking metrics compare?"
+    ],
+    "keywords": [
+      "AUC-PR",
+      "AUC-ROC",
+      "Path A",
+      "Path B"
+    ],
+    "speakingKeywords": [
+      "Path B best AUC-PR 0.9083",
+      "Path B best AUC-ROC 0.8821",
+      "metric-dependent"
+    ],
+    "thinking": "Reject the simple 'winner' story: the highest model changes by metric.",
+    "answer": "Path B had the highest hold-out AUC-PR at 0.9083 and AUC-ROC at 0.8821. Path A had the highest hold-out F1 at 0.8276. The differences were small, so the ranking depends on the chosen metric and none supports a strong superiority claim.",
+    "source": "Paper p. 4 · Table IV",
+    "followUps": [
+      "performance",
+      "f1_choice"
+    ]
+  },
+  {
+    "id": "precision_recall_tradeoff",
+    "category": "Metrics and statistics",
+    "question": "How did precision and recall change after refinement?",
+    "variants": [
+      "Did Path A reduce false alarms or missed rain?",
+      "What was the precision–recall trade-off?"
+    ],
+    "keywords": [
+      "precision",
+      "recall",
+      "false alarm",
+      "missed rain"
+    ],
+    "speakingKeywords": [
+      "baseline 0.8082/0.8194",
+      "Path A 0.8219/0.8333",
+      "Path B recall 0.8333"
+    ],
+    "thinking": "Give both metrics and avoid overstating a one-day change.",
+    "answer": "Baseline precision and recall were 0.8082 and 0.8194. Path A reached 0.8219 and 0.8333; Path B reached 0.8108 and 0.8333. These are small hold-out changes, corresponding to only a few days, and they were not statistically significant.",
+    "source": "Paper p. 4 · Table IV",
+    "followUps": [
+      "baseline_errors",
+      "significance"
+    ]
+  },
+  {
+    "id": "pooled_vs_mean",
+    "category": "Metrics and statistics",
+    "question": "Why is pooled CV F1 different from mean fold F1?",
+    "variants": [
+      "Why is pooled F1 around 0.843 but mean F1 around 0.828?",
+      "Which cross-validation F1 should I cite?"
+    ],
+    "keywords": [
+      "pooled",
+      "mean fold",
+      "F1",
+      "cross validation"
+    ],
+    "speakingKeywords": [
+      "different aggregation",
+      "unequal fold weighting",
+      "cite both clearly"
+    ],
+    "thinking": "Explain arithmetic: F1 of pooled predictions is not the mean of fold F1 values.",
+    "answer": "Mean fold F1 averages the sixteen F1 scores, giving about 0.828 to 0.829. Pooled F1 combines all 2,212 predictions first and then computes one F1, giving about 0.841 to 0.843. Because F1 is nonlinear and fold sizes and class mixes differ, those two summaries need not match.",
+    "source": "Paper pp. 3, 5",
+    "followUps": [
+      "cv",
+      "performance"
+    ]
+  },
+  {
+    "id": "holm",
+    "category": "Metrics and statistics",
+    "question": "Why apply Holm correction?",
+    "variants": [
+      "Why are the adjusted p-values all 1.000?",
+      "How did you handle multiple comparisons?"
+    ],
+    "keywords": [
+      "Holm",
+      "multiple comparisons",
+      "adjusted p",
+      "three pairs"
+    ],
+    "speakingKeywords": [
+      "three pairwise tests",
+      "family-wise error",
+      "all adjusted p=1.000"
+    ],
+    "thinking": "Explain the risk of three comparisons, then cite the adjustment without claiming p is a probability of the null.",
+    "answer": "We compared three pairs of models. Holm adjustment controls the family-wise false-positive risk across those tests. The adjusted hold-out and pooled-CV McNemar p-values were 1.000 for all three pairs. That supports a conservative 'no detected difference' conclusion.",
+    "source": "Paper pp. 3, 5 · Table V",
+    "followUps": [
+      "significance",
+      "mcnemar"
+    ]
+  },
+  {
+    "id": "wilcoxon",
+    "category": "Metrics and statistics",
+    "question": "Why include a Wilcoxon test over folds?",
+    "variants": [
+      "What did per-fold Wilcoxon test?",
+      "How did you account for correlated daily predictions?"
+    ],
+    "keywords": [
+      "Wilcoxon",
+      "fold",
+      "paired",
+      "autocorrelation"
+    ],
+    "speakingKeywords": [
+      "16 paired fold F1 values",
+      "all p ≥ 0.638",
+      "complement, not cure"
+    ],
+    "thinking": "Describe it as a complementary unit of comparison, not a perfect solution to serial dependence.",
+    "answer": "Pooled day-level tests can be optimistic because nearby weather days are correlated. We therefore compared paired F1 scores across the sixteen folds with Wilcoxon; all reported p-values were at least 0.638. This supports the same cautious conclusion, although it does not remove every dependence concern.",
+    "source": "Paper pp. 3, 5",
+    "followUps": [
+      "autocorrelation",
+      "significance"
+    ]
+  },
+  {
+    "id": "equivalence",
+    "category": "Metrics and statistics",
+    "question": "Does a non-significant result prove the models are equivalent?",
+    "variants": [
+      "Can you say Path A and Path B are equally accurate?",
+      "What does failure to reject mean here?"
+    ],
+    "keywords": [
+      "equivalence",
+      "non-significant",
+      "same accuracy",
+      "failure to reject"
+    ],
+    "speakingKeywords": [
+      "no detected difference",
+      "not equivalence proof",
+      "small hold-out"
+    ],
+    "thinking": "Use precise statistical language and acknowledge power limits.",
+    "answer": "No. A non-significant test means we did not detect a difference with these data and tests. It does not prove equal performance. An equivalence claim would need a predefined acceptable margin and an equivalence-specific analysis, which this study did not perform.",
+    "source": "Paper p. 5",
+    "followUps": [
+      "significance",
+      "holdout_small"
+    ]
+  },
+  {
+    "id": "effect_size",
+    "category": "Metrics and statistics",
+    "question": "What is the practical size of Path A's gain?",
+    "variants": [
+      "Is a 0.0138 F1 increase meaningful?",
+      "How many extra days did Path A classify correctly?"
+    ],
+    "keywords": [
+      "effect size",
+      "0.0138",
+      "two days",
+      "practical"
+    ],
+    "speakingKeywords": [
+      "F1 +0.0138",
+      "104 versus 102 correct",
+      "uncertain practical value"
+    ],
+    "thinking": "Translate abstract F1 into corrected days, then avoid exaggeration.",
+    "answer": "On the 129-day hold-out, Path A's F1 was 0.0138 higher than baseline and it classified two more days correctly overall: 104 versus 102. It fixed three baseline errors but introduced one new error. That is a small observed change, and the significance tests did not establish a reliable advantage.",
+    "source": "Paper pp. 4–5",
+    "followUps": [
+      "mcnemar",
+      "significance"
+    ]
+  },
+  {
+    "id": "confidence_interval",
+    "category": "Metrics and statistics",
+    "question": "Did you report confidence intervals for performance differences?",
+    "variants": [
+      "How uncertain is the F1 gap?",
+      "Could confidence intervals improve the analysis?"
+    ],
+    "keywords": [
+      "confidence interval",
+      "uncertainty",
+      "F1 difference"
+    ],
+    "speakingKeywords": [
+      "not reported",
+      "paired intervals useful",
+      "avoid invented precision"
+    ],
+    "thinking": "Admit what the paper did not quantify; do not fabricate a range.",
+    "answer": "The paper reports paired tests and fold-level variation, but not a confidence interval for the hold-out F1 difference. A paired bootstrap or another time-aware interval procedure would make the uncertainty easier to interpret. I would not quote an interval that we did not calculate.",
+    "source": "Paper pp. 4–6 (reported statistics)",
+    "followUps": [
+      "effect_size",
+      "autocorrelation"
+    ]
+  },
+  {
+    "id": "official_forecast",
+    "category": "Application and limits",
+    "question": "Can this model replace an official BMKG forecast?",
+    "variants": [
+      "Would you deploy this for public warnings?",
+      "Is the model ready for operational use?",
+      "Is your model ready for emergency warnings?"
+    ],
+    "keywords": [
+      "official",
+      "BMKG",
+      "deploy",
+      "warning",
+      "operational"
+    ],
+    "speakingKeywords": [
+      "decision support only",
+      "single station",
+      "validation gaps"
+    ],
+    "thinking": "Protect the scope: planning support is not public warning authority.",
+    "answer": "No. The model is a research prototype for daily planning support at one station. Its data and evaluation limitations, including calendar misalignment and incomplete independence of validation, mean it should not replace official BMKG information or public warning procedures.",
+    "source": "Paper pp. 2, 6",
+    "followUps": [
+      "operational_scope",
+      "future"
+    ]
+  },
+  {
+    "id": "out_of_scope_hourly",
+    "category": "Application and limits",
+    "question": "Could this model predict hourly storms or nowcast rain?",
+    "variants": [
+      "Why not use radar for nowcasting?",
+      "Can your daily model detect sudden heavy rain?"
+    ],
+    "keywords": [
+      "hourly",
+      "nowcasting",
+      "radar",
+      "storm",
+      "daily"
+    ],
+    "speakingKeywords": [
+      "daily H+1 scope",
+      "no radar inputs",
+      "future extension"
+    ],
+    "thinking": "Do not extend daily station findings to a faster hazard problem.",
+    "answer": "Not with the evidence in this paper. We used daily station observations and a next-day binary target, with no radar or hourly predictors. Hourly nowcasting, especially sudden intense rain, is a different task and is listed as future work.",
+    "source": "Paper pp. 2, 6",
+    "followUps": [
+      "official_forecast",
+      "future"
+    ]
+  },
+  {
+    "id": "heavy_rain",
+    "category": "Application and limits",
+    "question": "Can the model forecast heavy or extreme rainfall?",
+    "variants": [
+      "Does your rain class distinguish light and heavy rain?",
+      "How would the model handle extreme events?"
+    ],
+    "keywords": [
+      "heavy rain",
+      "extreme",
+      "intensity",
+      "binary"
+    ],
+    "speakingKeywords": [
+      "RR ≥ 0.5 mm binary",
+      "no intensity class",
+      "separate target needed"
+    ],
+    "thinking": "Return to the defined target and avoid inferring extreme-event skill from ordinary-rain F1.",
+    "answer": "No specific heavy-rain skill was evaluated. The target groups every day with RR at least 0.5 mm into one rain class, so a light-rain day and a heavy-rain day are treated alike. Extreme-rain prediction would need a separate target and evaluation.",
+    "source": "Paper pp. 1–2",
+    "followUps": [
+      "why_binary",
+      "threshold_rain"
+    ]
+  },
+  {
+    "id": "literature_gap",
+    "category": "Research design",
+    "question": "How is your work different from prior XAI rainfall studies?",
+    "variants": [
+      "What does your literature review add?",
+      "Has LIME-guided rainfall refinement already been studied?"
+    ],
+    "keywords": [
+      "prior work",
+      "literature",
+      "research gap",
+      "XAI rainfall"
+    ],
+    "speakingKeywords": [
+      "BMKG daily data",
+      "controlled gain comparator",
+      "significance and ablation"
+    ],
+    "thinking": "Name the combination tested here; do not claim no one has ever explained a rainfall model.",
+    "answer": "Prior work has applied XAI to weather models, but our paper tests LIME as refinement feedback on daily BMKG rainfall classification and directly compares it with XGBoost gain importance. The paired tests, ablation, and seed stability make the claim narrower and more testable.",
+    "source": "Paper p. 2 · Table I",
+    "followUps": [
+      "contribution",
+      "lime_vs_gain"
+    ]
+  },
+  {
+    "id": "companion_status",
+    "category": "Method comparison",
+    "question": "Is the SHAP companion study part of this published paper?",
+    "variants": [
+      "What is the status of the companion study?",
+      "Can I cite the SHAP slide as a result of this LIME paper?"
+    ],
+    "keywords": [
+      "SHAP",
+      "companion",
+      "under review",
+      "published"
+    ],
+    "speakingKeywords": [
+      "separate study",
+      "under review in paper",
+      "slide 14 comparison"
+    ],
+    "thinking": "Keep publication status and evidentiary scope explicit.",
+    "answer": "No. The LIME paper says the companion TreeSHAP study was under review. Slide 14 gives comparative figures for discussion, but the SHAP analysis is separate from this paper's main experiment. I would label it as companion work rather than a published result of the LIME paper.",
+    "source": "Paper p. 1 · Slide 14",
+    "followUps": [
+      "shap",
+      "contribution"
+    ]
+  },
+  {
+    "id": "no_pressure",
+    "category": "Data and target",
+    "question": "Why were pressure and upper-air variables absent?",
+    "variants": [
+      "Did you include radiosonde data?",
+      "Could air pressure improve the model?"
+    ],
+    "keywords": [
+      "pressure",
+      "radiosonde",
+      "upper air",
+      "missing predictors"
+    ],
+    "speakingKeywords": [
+      "not in dataset",
+      "daily station fields only",
+      "possible future features"
+    ],
+    "thinking": "State the data boundary and avoid predicting the effect of unseen variables.",
+    "answer": "The available dataset for this study contained BMKG daily station fields, not pressure or radiosonde measurements. Those variables could be useful, but we did not test them, so I cannot quantify how much they would change performance.",
+    "source": "Paper p. 2",
+    "followUps": [
+      "dataset",
+      "future"
+    ]
+  },
+  {
+    "id": "input_timing",
+    "category": "Data and target",
+    "question": "When would the input observations be available for an H+1 forecast?",
+    "variants": [
+      "Is the model truly usable one day ahead?",
+      "Could current-day fields arrive too late for the intended decision?"
+    ],
+    "keywords": [
+      "input timing",
+      "H+1",
+      "availability",
+      "current day"
+    ],
+    "speakingKeywords": [
+      "current-day fields",
+      "next-day target",
+      "operational timing untested"
+    ],
+    "thinking": "Separate the time direction of features from the real publication schedule of observations.",
+    "answer": "The model uses current-day and earlier daily observations to classify the next observed day's rain. The paper does not evaluate when every current-day BMKG field becomes available operationally. Before deployment, we would need to align the forecast issue time with actual data release times.",
+    "source": "Paper pp. 2–3 (feature timing); operational timing not evaluated",
+    "followUps": [
+      "lag_construction",
+      "official_forecast"
+    ]
+  },
+  {
+    "id": "test_imputation",
+    "category": "Preprocessing integrity",
+    "question": "Were test-set statistics used for imputation?",
+    "variants": [
+      "Did you fit the imputer on the whole dataset?",
+      "Could imputation leak test information?"
+    ],
+    "keywords": [
+      "test imputation",
+      "training statistics",
+      "leakage",
+      "imputer"
+    ],
+    "speakingKeywords": [
+      "training-only means and medians",
+      "no test-statistic fitting"
+    ],
+    "thinking": "Answer the specific leakage concern, then avoid claiming the entire evaluation is independent.",
+    "answer": "The paper specifies that imputation values were computed from training statistics only, so the hold-out predictors did not set the means, medians, or mode. That addresses this particular leakage route. Other evaluation dependence issues remain, especially feature selection and tuning relative to CV.",
+    "source": "Paper pp. 2, 6",
+    "followUps": [
+      "imputation_details",
+      "leakage"
+    ]
+  },
+  {
+    "id": "local_explanation",
+    "category": "LIME interpretation",
+    "question": "What did LIME say about the 22 December false negative?",
+    "variants": [
+      "Why did the baseline miss the December case?",
+      "What was the strongest local LIME condition?"
+    ],
+    "keywords": [
+      "December",
+      "false negative",
+      "LIME",
+      "73",
+      "humidity"
+    ],
+    "speakingKeywords": [
+      "P(rain)=0.491",
+      "RH_avg ≤73% negative",
+      "season positive"
+    ],
+    "thinking": "Describe the model's explanation, not a proven physical cause of the weather event.",
+    "answer": "For 22 December 2020, the baseline predicted rain probability 0.491 and missed the next day's 2.0-mm rain. LIME assigned the strongest negative contribution to the low RH_avg bin, with a smaller seasonal push toward rain. This explains model behavior locally; it does not explain the atmosphere's full causal process.",
+    "source": "Paper p. 3 · Fig. 4",
+    "followUps": [
+      "case",
+      "quartile_thresholds"
+    ]
+  },
+  {
+    "id": "rh_monotonic",
+    "category": "LIME interpretation",
+    "question": "Did higher RH_avg always push the model toward rain?",
+    "variants": [
+      "How did LIME weight change across humidity quartiles?",
+      "Was the humidity effect monotonic in the explanation?"
+    ],
+    "keywords": [
+      "RH_avg",
+      "quartile",
+      "monotonic",
+      "rain"
+    ],
+    "speakingKeywords": [
+      "increases across quartiles",
+      "positive above about 79% bin",
+      "not physical cutoff"
+    ],
+    "thinking": "Report the observed LIME pattern while limiting the interpretation to this model and discretization.",
+    "answer": "In the aggregate display, the RH_avg contribution increased across the four LIME humidity quartiles and became positive in the highest bin, above roughly 79%. That is a model-explanation pattern. The bin edge is not a universal humidity threshold for rain.",
+    "source": "Paper p. 4 · Fig. 6",
+    "followUps": [
+      "humidity",
+      "quartile_thresholds"
+    ]
+  },
+  {
+    "id": "point_biserial",
+    "category": "LIME interpretation",
+    "question": "What did the point-biserial correlation check show?",
+    "variants": [
+      "Were LIME's top features correlated with tomorrow's rain?",
+      "What were the strongest marginal correlations?"
+    ],
+    "keywords": [
+      "point-biserial",
+      "correlation",
+      "RH_avg",
+      "sunshine"
+    ],
+    "speakingKeywords": [
+      "7 of top 8 significant",
+      "RH_avg r=0.590",
+      "sunshine r=-0.401"
+    ],
+    "thinking": "State the marginal check and its limitation: correlation does not validate attribution.",
+    "answer": "Seven of the top eight LIME features had significant point-biserial correlations with the binary target. RH_avg was strongest positive at r = 0.590, while sunshine was strongest negative at r = -0.401. These marginal associations support plausibility but do not validate the LIME weights.",
+    "source": "Paper p. 4 · Table III",
+    "followUps": [
+      "physics_check",
+      "humidity"
+    ]
+  },
+  {
+    "id": "wind_borderline",
+    "category": "Path A and Path B",
+    "question": "How robust was the decision to drop ddd_x?",
+    "variants": [
+      "Which LIME pruning decision was unstable?",
+      "Why is ddd_x called borderline?"
+    ],
+    "keywords": [
+      "ddd_x",
+      "borderline",
+      "2%",
+      "seed",
+      "pruning"
+    ],
+    "speakingKeywords": [
+      "mean near 2%",
+      "below in 4 of 10 seeds",
+      "sensitivity needed"
+    ],
+    "thinking": "Point to the one unstable decision instead of saying all pruning decisions were identical.",
+    "answer": "Most pruning decisions were stable, but ddd_x sat near the 2% boundary. It was below the threshold in only four of ten seed runs and was 1.89% in the run used for Path A. We therefore describe that single removal as borderline.",
+    "source": "Paper p. 5 · Table VI",
+    "followUps": [
+      "why_two_percent",
+      "lime_stability"
+    ]
+  },
+  {
+    "id": "topfive_jaccard",
+    "category": "LIME interpretation",
+    "question": "What does top-five Jaccard similarity of 1.0 mean?",
+    "variants": [
+      "Did the top five LIME features change across seeds?",
+      "How stable was the top-five set?"
+    ],
+    "keywords": [
+      "Jaccard",
+      "top five",
+      "stability",
+      "seed"
+    ],
+    "speakingKeywords": [
+      "same top-five set",
+      "10 seeds",
+      "not attribution validity"
+    ],
+    "thinking": "Translate the statistic into plain language and limit its claim.",
+    "answer": "A top-five Jaccard similarity of 1.0 means the set of the five highest-ranked features was identical across all ten seed runs. It shows strong run-to-run consistency for this dataset and setup, not that every explanation is causally correct.",
+    "source": "Paper p. 5 · Table VI",
+    "followUps": [
+      "lime_stability",
+      "physics_check"
+    ]
+  },
+  {
+    "id": "kendall_spearman",
+    "category": "LIME interpretation",
+    "question": "Why report both Kendall's W and Spearman correlation?",
+    "variants": [
+      "What do the ranking-stability statistics measure?",
+      "How should W 0.976 and rho 0.974 be read?"
+    ],
+    "keywords": [
+      "Kendall",
+      "Spearman",
+      "ranking",
+      "stability"
+    ],
+    "speakingKeywords": [
+      "W overall agreement",
+      "rho pairwise similarity",
+      "both high"
+    ],
+    "thinking": "Explain the distinct summaries without interpreting them as a test of physical correctness.",
+    "answer": "Kendall's W summarizes agreement among all ten rankings, while pairwise Spearman rho measures similarity between two seed runs. For the baseline, W was 0.976 and mean rho was 0.974, both indicating highly consistent ordering across seeds. Neither statistic verifies causal interpretation.",
+    "source": "Paper p. 5 · Table VI",
+    "followUps": [
+      "lime_stability",
+      "topfive_jaccard"
+    ]
+  },
+  {
+    "id": "exact_mcnemar",
+    "category": "Metrics and statistics",
+    "question": "When did you use the exact version of McNemar's test?",
+    "variants": [
+      "Why use an exact binomial test on the hold-out?",
+      "What happens when discordant pairs are below 25?"
+    ],
+    "keywords": [
+      "exact McNemar",
+      "binomial",
+      "discordant",
+      "25"
+    ],
+    "speakingKeywords": [
+      "b+c below 25",
+      "exact binomial",
+      "otherwise corrected chi-square"
+    ],
+    "thinking": "Give the pre-specified test rule; do not recompute p-values from memory.",
+    "answer": "The method used an exact binomial McNemar test when the total discordant pairs, b plus c, was below 25. Otherwise it used a continuity-corrected chi-square version. The hold-out pair comparisons had only a few discordant days, so the exact rule applied.",
+    "source": "Paper p. 3 · Table V",
+    "followUps": [
+      "mcnemar",
+      "significance"
+    ]
+  },
+  {
+    "id": "paired_t",
+    "category": "Metrics and statistics",
+    "question": "Why report a paired t-test as well as Wilcoxon?",
+    "variants": [
+      "Did the parametric fold-level check agree?",
+      "What were the paired t-test p-values?"
+    ],
+    "keywords": [
+      "paired t-test",
+      "Wilcoxon",
+      "fold",
+      "p-values"
+    ],
+    "speakingKeywords": [
+      "16 paired folds",
+      "p 0.689, 0.925, 0.699",
+      "same conclusion"
+    ],
+    "thinking": "Treat the t-test as a supplementary check, not an independent replication.",
+    "answer": "We added a paired t-test on the sixteen fold F1 scores as another summary of model differences. The reported p-values were 0.689, 0.925, and 0.699 for the three pairings, agreeing with the non-significant Wilcoxon results. The folds still come from the same dataset.",
+    "source": "Paper p. 5",
+    "followUps": [
+      "wilcoxon",
+      "cv"
+    ]
+  },
+  {
+    "id": "cv_overlap",
+    "category": "Evaluation and validation",
+    "question": "Did a cross-validation fold overlap the final hold-out period?",
+    "variants": [
+      "Are the CV and hold-out estimates independent?",
+      "Could the last fold reuse 2020 test days?"
+    ],
+    "keywords": [
+      "CV overlap",
+      "hold-out",
+      "last fold",
+      "independence"
+    ],
+    "speakingKeywords": [
+      "last fold overlaps hold-out",
+      "not independent evidence",
+      "reported limitation"
+    ],
+    "thinking": "Acknowledge the overlap plainly; do not describe CV as an independent external test.",
+    "answer": "Yes. The last cross-validation fold overlaps the hold-out period, so the two summaries are not fully independent confirmations. The paper reports this explicitly. A future design should keep a truly untouched final period after all model and feature choices.",
+    "source": "Paper p. 6",
+    "followUps": [
+      "leakage",
+      "nested_selection"
+    ]
+  },
+  {
+    "id": "nested_selection",
+    "category": "Evaluation and validation",
+    "question": "What would a fully nested evaluation change?",
+    "variants": [
+      "How would you redesign the feature-selection pipeline?",
+      "Should LIME ranking be recomputed within each fold?",
+      "What would a full nested validation look like?"
+    ],
+    "keywords": [
+      "nested",
+      "feature selection",
+      "training fold",
+      "LIME ranking"
+    ],
+    "speakingKeywords": [
+      "fit and rank inside each training fold",
+      "untouched test fold",
+      "fair common feature pool"
+    ],
+    "thinking": "Describe the proper sequence and why it matters for unbiased evaluation.",
+    "answer": "In each outer time-series fold, we would tune and build the baseline using only that fold's training period, compute LIME or gain rankings there, choose features, then evaluate once on the untouched fold test period. A separate final hold-out would remain untouched until the end. That would reduce selection bias in the reported CV scores.",
+    "source": "Paper p. 6 (proposed future correction)",
+    "followUps": [
+      "leakage",
+      "cv_overlap"
+    ]
+  },
+  {
+    "id": "holdout_features",
+    "category": "Evaluation and validation",
+    "question": "Why is using hold-out feature values for LIME ranking a concern?",
+    "variants": [
+      "Did Path A inspect the test set before selection?",
+      "Is using unlabeled test covariates harmless?"
+    ],
+    "keywords": [
+      "hold-out features",
+      "LIME ranking",
+      "unlabeled",
+      "selection bias"
+    ],
+    "speakingKeywords": [
+      "labels not used",
+      "covariates used",
+      "asymmetry versus Path B"
+    ],
+    "thinking": "Avoid the binary 'leak or no leak' answer; identify the exact asymmetry.",
+    "answer": "Path A's aggregate LIME ranking used the 129 hold-out feature vectors, although not their labels, while Path B's gain ranking came from training data. That asymmetry could favor Path A and weakens a fully prospective interpretation. It does not explain away the absence of a significant advantage; future ranking should use training data only.",
+    "source": "Paper p. 6",
+    "followUps": [
+      "leakage",
+      "unequal_paths"
+    ]
+  },
+  {
+    "id": "runtime_cost",
+    "category": "Application and limits",
+    "question": "Did you measure the computational cost of LIME?",
+    "variants": [
+      "How fast is the explanation step?",
+      "Is LIME practical for real-time deployment?"
+    ],
+    "keywords": [
+      "runtime",
+      "computational cost",
+      "LIME",
+      "real time"
+    ],
+    "speakingKeywords": [
+      "not benchmarked",
+      "5,000 perturbations per explanation",
+      "offline refinement possible"
+    ],
+    "thinking": "Do not invent timing numbers; distinguish model inference from explanation generation.",
+    "answer": "The paper does not benchmark runtime. LIME used 5,000 perturbations per explanation, so explanation generation is more work than one XGBoost prediction. Our main use of LIME is offline model diagnosis and refinement; deployment latency would need a measured benchmark.",
+    "source": "Paper p. 3 (LIME settings; runtime not reported)",
+    "followUps": [
+      "lime_perturbations",
+      "official_forecast"
+    ]
+  },
+  {
+    "id": "lime_fidelity",
+    "category": "LIME interpretation",
+    "question": "Did you measure local surrogate fidelity?",
+    "variants": [
+      "How do you know LIME approximated XGBoost well locally?",
+      "Were LIME explanation fit scores reported?"
+    ],
+    "keywords": [
+      "LIME fidelity",
+      "surrogate fit",
+      "local approximation",
+      "explanation quality"
+    ],
+    "speakingKeywords": [
+      "not reported",
+      "stability is different",
+      "future fidelity check"
+    ],
+    "thinking": "Separate repeatability from fidelity; admit the missing measurement.",
+    "answer": "The paper reports ranking stability across seeds but does not report a separate local-surrogate fidelity score for each explanation. A stable ranking can still approximate the model imperfectly. A future analysis should report local fit quality and inspect cases where the surrogate is weak.",
+    "source": "Paper pp. 3–5 (reported LIME analyses)",
+    "followUps": [
+      "lime_stability",
+      "physics_check"
+    ]
+  },
+  {
+    "id": "outside_scope",
+    "category": "Presentation defense",
+    "question": "What should you say if a question is outside the study's evidence?",
+    "variants": [
+      "How do you answer something you did not test?",
+      "Can you speculate about an untested model?"
+    ],
+    "keywords": [
+      "outside scope",
+      "not tested",
+      "uncertain",
+      "speculate"
+    ],
+    "speakingKeywords": [
+      "acknowledge question",
+      "state what was tested",
+      "propose a test"
+    ],
+    "thinking": "Be courteous, then separate evidence from a reasonable next experiment.",
+    "answer": "That is a useful question. We did not test that setting in this study, so I do not want to claim a result. Based on our design, the next step would be to define the target and evaluate it with a time-ordered, independent test set.",
+    "source": "General response aligned with paper scope, pp. 2, 6",
+    "followUps": [
+      "future",
+      "official_forecast"
+    ]
+  },
+  {
+    "id": "honest_takeaway",
+    "category": "Presentation defense",
+    "question": "What is the single most defensible conclusion?",
+    "variants": [
+      "What should the audience remember?",
+      "Can you summarize the result without overstating it?"
+    ],
+    "keywords": [
+      "conclusion",
+      "takeaway",
+      "defensible",
+      "summary"
+    ],
+    "speakingKeywords": [
+      "stable LIME ranking",
+      "smaller model",
+      "no proven accuracy gain"
+    ],
+    "thinking": "Lead with the supported finding, then the clear limit.",
+    "answer": "LIME gave a stable, physically plausible diagnostic view and supported a smaller feature set for this Bandung station dataset. The small hold-out F1 increase came from cyclic encoding and was not statistically significant. We therefore do not claim an accuracy advantage over built-in gain importance.",
+    "source": "Paper pp. 5–6 · Slide 15",
+    "followUps": [
+      "why_lime",
+      "ablation"
+    ]
+  }
+]
