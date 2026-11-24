@@ -1,6 +1,6 @@
 # Naura Q&A Desk
 
-Website statis untuk sesi Q&A paper *LIME-Guided Refinement for One-Day-Ahead Rainfall Classification Using XGBoost at Bandung Geophysical Station*. Bank berisi **201 topik jawaban dan 890 bentuk pertanyaan**, termasuk **100 topik teknis AI**. Semua pertanyaan tampil berbentuk pertanyaan seminar yang lengkap dan sopan dalam bahasa Inggris; versi pendek tetap dipakai untuk pencocokan transkrip. Domain teknis AI tampil paling depan.
+Website statis untuk sesi Q&A paper *LIME-Guided Refinement for One-Day-Ahead Rainfall Classification Using XGBoost at Bandung Geophysical Station*. Bank berisi **201 topik jawaban dan 1.020 bentuk pertanyaan**, termasuk **100 topik teknis AI**. Semua pertanyaan tampil berbentuk pertanyaan seminar yang lengkap dan sopan dalam bahasa Inggris; versi pendek tetap dipakai untuk pencocokan transkrip. Domain teknis AI tampil paling depan.
 
 ## Jalankan sebelum acara
 

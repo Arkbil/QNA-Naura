@@ -414,10 +414,10 @@ ui.copy.onclick = async () => {
 };
 window.addEventListener('online', updateNetwork); window.addEventListener('offline', updateNetwork); updateNetwork();
 if (!speechSupported) ui.status.textContent = voskSupported ? 'Bundled offline speech is available. Enter question mode to load it.' : 'Local speech is unavailable in this browser. Typed search still works.';
-Promise.all(['./qna.json', './qna-extra.json', './qna-ai.json', './qna-ai-deep.json', './guidance-en.json', './spoken-questions.json', './qna-variants-more.json', './expanded-answers.json'].map(path => fetch(path).then(response => { if (!response.ok) throw new Error('Q&A bank could not be opened'); return response.json(); })))
-  .then(([base, extra, ai, deep, guidance, spoken, more, expanded]) => {
+Promise.all(['./qna.json', './qna-extra.json', './qna-ai.json', './qna-ai-deep.json', './guidance-en.json', './spoken-questions.json', './qna-variants-more.json', './expanded-answers.json', './answer-extensions.json'].map(path => fetch(path).then(response => { if (!response.ok) throw new Error('Q&A bank could not be opened'); return response.json(); })))
+  .then(([base, extra, ai, deep, guidance, spoken, more, expanded, extensions]) => {
     bank = [...base.map(item => ({ ...item, ...guidance[item.id] })), ...extra, ...ai, ...deep]
-      .map(item => ({ ...item, question: spoken[item.id] || item.question, variants: [item.question, ...item.variants, ...(more[item.id] || [])], answer: expanded[item.id] || item.answer }));
+      .map(item => ({ ...item, question: spoken[item.id] || item.question, variants: [item.question, ...item.variants, ...(more[item.id] || [])], answer: expanded[item.id] || (extensions[item.id] ? `Thank you for the question.\n\n${item.answer}\n\n${extensions[item.id]}` : item.answer) }));
     renderCategories(); updateMatch();
   })
   .catch(error => { ui.status.textContent = error.message; });

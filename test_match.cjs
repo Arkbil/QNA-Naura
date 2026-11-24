@@ -6,12 +6,13 @@ const guidance = JSON.parse(fs.readFileSync('guidance-en.json', 'utf8'));
 const spoken = JSON.parse(fs.readFileSync('spoken-questions.json', 'utf8'));
 const more = JSON.parse(fs.readFileSync('qna-variants-more.json', 'utf8'));
 const expanded = JSON.parse(fs.readFileSync('expanded-answers.json', 'utf8'));
+const extensions = JSON.parse(fs.readFileSync('answer-extensions.json', 'utf8'));
 const bank = [
   ...JSON.parse(fs.readFileSync('qna.json', 'utf8')).map(item => ({ ...item, ...guidance[item.id] })),
   ...JSON.parse(fs.readFileSync('qna-extra.json', 'utf8')),
   ...JSON.parse(fs.readFileSync('qna-ai.json', 'utf8')),
   ...JSON.parse(fs.readFileSync('qna-ai-deep.json', 'utf8'))
-].map(item => ({ ...item, question: spoken[item.id] || item.question, variants: [item.question, ...item.variants, ...(more[item.id] || [])], answer: expanded[item.id] || item.answer }));
+].map(item => ({ ...item, question: spoken[item.id] || item.question, variants: [item.question, ...item.variants, ...(more[item.id] || [])], answer: expanded[item.id] || (extensions[item.id] ? `Thank you for the question.\n\n${item.answer}\n\n${extensions[item.id]}` : item.answer) }));
 const context = vm.createContext({ document: { getElementById: () => ({}) } });
 vm.runInContext(source, context);
 vm.runInContext(`bank = ${JSON.stringify(bank)}`, context);
@@ -20,7 +21,7 @@ const html = fs.readFileSync('index.html', 'utf8');
 const app = fs.readFileSync('app.js', 'utf8');
 const worker = fs.readFileSync('sw.js', 'utf8');
 for (const [, id] of app.matchAll(/\$\('([^']+)'\)/g)) assert.ok(html.includes(`id="${id}"`), `Missing HTML element: ${id}`);
-for (const asset of ['index.html', 'styles.css', 'extras.css', 'vendor/vosk.js', 'app.js', 'qna.json', 'qna-extra.json', 'qna-ai.json', 'qna-ai-deep.json', 'guidance-en.json', 'spoken-questions.json', 'qna-variants-more.json', 'expanded-answers.json', 'manifest.webmanifest']) {
+for (const asset of ['index.html', 'styles.css', 'extras.css', 'vendor/vosk.js', 'app.js', 'qna.json', 'qna-extra.json', 'qna-ai.json', 'qna-ai-deep.json', 'guidance-en.json', 'spoken-questions.json', 'qna-variants-more.json', 'expanded-answers.json', 'answer-extensions.json', 'manifest.webmanifest']) {
   assert.ok(fs.existsSync(asset), `Missing asset: ${asset}`);
   assert.ok(worker.includes(`'./${asset}'`), `Asset absent from offline cache: ${asset}`);
 }
