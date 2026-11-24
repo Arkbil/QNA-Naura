@@ -31,11 +31,11 @@ let contextEntry = null;
 let followupMode = false;
 let captureGeneration = 0;
 
-const stopWords = new Set('the a an and or of to in on for with from about what why how when where which is are was were be been do does did can could should would this that it we our your you i they them their there as at by if then than have has had not no more most much many any all between compared compare using use used yang dan di ke dari untuk pada apa mengapa kenapa bagaimana apakah apakahnya ini itu dengan sebagai adalah ada tidak lebih oleh kami saya kita'.split(' '));
+const stopWords = new Set('the a an and or of to in on for with from about what why how when where which is are was were be been do does did can could should would this that it we our your you i they them their there as at by if then than have has had more most much many any all between compared compare using use used hi hello thanks thank presentation question curious wondering wonder noticed looking please explain tell clarify could kind just actually basically yang dan di ke dari untuk pada apa mengapa kenapa bagaimana apakah apakahnya ini itu dengan sebagai adalah ada lebih oleh kami saya kita'.split(' '));
 const aliases = new Map(Object.entries({
   accuracy:'accuraci', accurate:'accuraci', akurasi:'accuraci', performance:'perform', performa:'perform',
   significant:'signific', significance:'signific', statistically:'statist', statistical:'statist', statistik:'statist', signifikan:'signific',
-  improvement:'improv', improved:'improv', improve:'improv', increase:'improv', gain:'improv', peningkatan:'improv', meningkat:'improv',
+  improvement:'improv', improved:'improv', improve:'improv', increase:'improv', peningkatan:'improv', meningkat:'improv',
   feature:'fitur', features:'fitur', importance:'importanc', penting:'importanc', kepentingan:'importanc',
   input:'fitur', inputs:'fitur', predictor:'fitur', predictors:'fitur', strongest:'dominant', main:'dominant',
   rainfall:'rain', rainy:'rain', raining:'rain', hujan:'rain', precipitation:'rain',
@@ -64,40 +64,51 @@ const aliases = new Map(Object.entries({
 }));
 
 function tokenize(text) {
-  return [...new Set(text.toLowerCase().normalize('NFKD').replace(/[\u0300-\u036f]/g, '').replace(/h\s*\+\s*1/g, ' h1 ').replace(/[^a-z0-9]+/g, ' ').trim().split(/\s+/)
+  return [...new Set(text.toLowerCase().normalize('NFKD').replace(/[\u0300-\u036f]/g, '')
+    .replace(/\b(?:x\s*g\s*boost|extreme gradient boosting)\b/g, 'xgboost')
+    .replace(/\b(?:f\s*one|eff one)\b/g, 'f1')
+    .replace(/\b(?:mac nemar|mc nemar)\b/g, 'mcnemar')
+    .replace(/h\s*\+\s*1/g, ' h1 ').replace(/[^a-z0-9]+/g, ' ').trim().split(/\s+/)
     .filter(word => word.length > 1 && !stopWords.has(word)).map(word => aliases.get(word) || word))];
 }
 
+const variantCache = new WeakMap();
+const phrase = value => value.toLowerCase().normalize('NFKD').replace(/[^a-z0-9]+/g, ' ').trim();
+
 function scoreEntry(query, entry) {
   const q = tokenize(query);
-  const variants = [entry.question, ...entry.variants, entry.keywords.join(' ')];
-  const phrase = value => value.toLowerCase().normalize('NFKD').replace(/[^a-z0-9]+/g, ' ').trim();
-  if (variants.slice(0, -1).some(variant => phrase(query) === phrase(variant))) return { score: 1, shared: Math.max(2, q.length) };
+  let variants = variantCache.get(entry);
+  if (!variants) {
+    variants = [entry.question, ...entry.variants, entry.keywords.join(' ')].map(value => ({ phrase: phrase(value), terms: tokenize(value) }));
+    variantCache.set(entry, variants);
+  }
+  if (variants.slice(0, -1).some(variant => phrase(query) === variant.phrase)) return { score: 1, shared: Math.max(2, q.length) };
   if (q.length < 2) return { score: 0, shared: 0 };
   let best = 0;
   let shared = 0;
   for (const variant of variants) {
-    const terms = tokenize(variant);
+    const terms = variant.terms;
     const common = q.filter(term => terms.includes(term));
     const overlap = common.length;
     const coverage = overlap / q.length;
+    const variantCoverage = overlap / terms.length;
     const dice = 2 * overlap / (q.length + terms.length);
-    const score = 0.65 * coverage + 0.35 * dice;
+    const score = 0.42 * coverage + 0.32 * variantCoverage + 0.26 * dice;
     if (score > best) { best = score; shared = overlap; }
   }
   const keywordHits = tokenize(entry.keywords.join(' ')).filter(term => q.includes(term)).length;
-  if (keywordHits === 0) return { score: 0, shared: 0 };
-  return { score: Math.min(0.96, best + Math.min(0.08, keywordHits * 0.02)), shared };
+  return { score: Math.min(0.96, best + Math.min(0.06, keywordHits * 0.02)), shared };
 }
 
 function matchQuestion(query) {
+  const parts = [query, ...query.split(/[?.!;]+/).map(part => part.trim()).filter(part => tokenize(part).length >= 2)];
   const ranked = bank.map(entry => {
-    const base = scoreEntry(query, entry);
+    const base = parts.map(part => scoreEntry(part, entry)).sort((a, b) => b.score - a.score)[0];
     const related = followupMode && contextEntry && (contextEntry.followUps || []).includes(entry.id);
     return { entry, ...base, score: base.shared >= 2 && base.score >= 0.48 && related ? Math.min(1, base.score + 0.05) : base.score };
   }).sort((a, b) => b.score - a.score);
   const top = ranked[0];
-  const ambiguous = top && top.score < 1 && ranked[1] && top.score - ranked[1].score < 0.08;
+  const ambiguous = top && ranked[1] && top.score - ranked[1].score < 0.08 && !(top.score === 1 && ranked[1].score < 1);
   if (!top || top.shared < 2 || top.score < 0.54 || ambiguous) return { match: null, weak: top && top.score > 0.25 ? top : null, ranked };
   return { match: top, weak: null, ranked };
 }
@@ -403,10 +414,10 @@ ui.copy.onclick = async () => {
 };
 window.addEventListener('online', updateNetwork); window.addEventListener('offline', updateNetwork); updateNetwork();
 if (!speechSupported) ui.status.textContent = voskSupported ? 'Bundled offline speech is available. Enter question mode to load it.' : 'Local speech is unavailable in this browser. Typed search still works.';
-Promise.all(['./qna.json', './qna-extra.json', './qna-ai.json', './qna-ai-deep.json', './guidance-en.json', './spoken-questions.json'].map(path => fetch(path).then(response => { if (!response.ok) throw new Error('Q&A bank could not be opened'); return response.json(); })))
-  .then(([base, extra, ai, deep, guidance, spoken]) => {
+Promise.all(['./qna.json', './qna-extra.json', './qna-ai.json', './qna-ai-deep.json', './guidance-en.json', './spoken-questions.json', './qna-variants-more.json', './expanded-answers.json'].map(path => fetch(path).then(response => { if (!response.ok) throw new Error('Q&A bank could not be opened'); return response.json(); })))
+  .then(([base, extra, ai, deep, guidance, spoken, more, expanded]) => {
     bank = [...base.map(item => ({ ...item, ...guidance[item.id] })), ...extra, ...ai, ...deep]
-      .map(item => spoken[item.id] ? { ...item, question: spoken[item.id], variants: [item.question, ...item.variants] } : item);
+      .map(item => ({ ...item, question: spoken[item.id] || item.question, variants: [item.question, ...item.variants, ...(more[item.id] || [])], answer: expanded[item.id] || item.answer }));
     renderCategories(); updateMatch();
   })
   .catch(error => { ui.status.textContent = error.message; });

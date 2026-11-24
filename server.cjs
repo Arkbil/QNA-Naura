@@ -6,7 +6,7 @@ const files = new Set([
   'index.html', 'styles.css', 'extras.css', 'app.js', 'sw.js',
   'manifest.webmanifest', 'model-en.tar.gz', 'vendor/vosk.js',
   'qna.json', 'qna-extra.json', 'qna-ai.json', 'qna-ai-deep.json',
-  'guidance-en.json', 'spoken-questions.json'
+  'guidance-en.json', 'spoken-questions.json', 'qna-variants-more.json', 'expanded-answers.json'
 ]);
 const types = {
   '.html': 'text/html; charset=utf-8',
